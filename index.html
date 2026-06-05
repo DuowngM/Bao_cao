@@ -1146,6 +1146,47 @@
       color: var(--success);
     }
 
+    /* Active Function Item Styles & Detail Styles */
+    .function-item.active-gateway {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+      background: rgba(56, 189, 248, 0.08) !important;
+    }
+
+    .function-item.active-core {
+      border-color: var(--success) !important;
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.15);
+      background: rgba(52, 211, 153, 0.08) !important;
+    }
+
+    .function-item.active-ai {
+      border-color: var(--secondary) !important;
+      box-shadow: 0 0 10px rgba(192, 132, 252, 0.15);
+      background: rgba(192, 132, 252, 0.08) !important;
+    }
+
+    #func-detail-desc p {
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+
+    #func-detail-desc ul {
+      margin-top: 0.5rem;
+      padding-left: 1.25rem;
+      list-style-type: disc;
+    }
+
+    #func-detail-desc li {
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    #func-detail-desc li strong {
+      color: #f1f5f9;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 1024px) {
       aside {
@@ -1570,11 +1611,11 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
           <div class="function-category">
             <div class="category-title">🌐 Tầng Giao diện & Gateway</div>
             <ul class="function-list">
-              <li class="function-item" onclick="showFunction('Đăng nhập hệ thống', 'Cho phép người dùng Đăng nhập, bảo mật và lưu giữ phiên thông qua Auth Service.')"><span>Đăng nhập</span> <span>🔑</span></li>
-              <li class="function-item" onclick="showFunction('Học khóa học', 'Giao diện xem bài học, xem video, tương tác các học liệu và tiến độ cá nhân.')"><span>Học khóa học</span> <span>📖</span></li>
-              <li class="function-item" onclick="showFunction('Tương tác AI Assistant', 'Giao diện Chatbot thông minh hỗ trợ trả lời thắc mắc học tập 24/7.')"><span>Tương tác AI Assistant</span> <span>💬</span></li>
-              <li class="function-item" onclick="showFunction('Giao diện Quản lý dự án', 'Bảng Kanban/Scrum tách biệt giữa Sinh viên (nhóm làm đồ án) và Giảng viên (quản lý công tác giảng dạy cá nhân hàng ngày).')"><span>Bảng Dự án</span> <span>📊</span></li>
-              <li class="function-item" onclick="showFunction('API Gateway', 'Định tuyến request, xác thực, phân quyền, ghi log nghiệp vụ và chuẩn hóa dữ liệu.')"><span>API Gateway (Gateway)</span> <span>🛡️</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'dang-nhap', 'gateway')"><span>Đăng nhập</span> <span>🔑</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'hoc-khoa-hoc', 'gateway')"><span>Học khóa học</span> <span>📖</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'tuong-tac-ai', 'gateway')"><span>Tương tác AI Assistant</span> <span>💬</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'bang-du-an', 'gateway')"><span>Bảng Dự án</span> <span>📊</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'api-gateway', 'gateway')"><span>API Gateway (Gateway)</span> <span>🛡️</span></li>
             </ul>
           </div>
         </div>
@@ -1584,12 +1625,12 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
           <div class="function-category">
             <div class="category-title">🏛️ LMS Core (Modular Monolith)</div>
             <ul class="function-list">
-              <li class="function-item" onclick="showFunction('Hệ đào tạo', 'Quản lý thông tin hệ chuyên ngành đào tạo, niên khóa và các kỳ học.')"><span>Hệ đào tạo & Kỳ học</span> <span>🏫</span></li>
-              <li class="function-item" onclick="showFunction('Lớp học & Nghiệp vụ', 'Học phần cụ thể, Điểm danh, Thời khóa biểu, quản lý nhóm và đơn xin nghỉ phép.')"><span>Nghiệp vụ Lớp học</span> <span>📅</span></li>
-              <li class="function-item" onclick="showFunction('Module Quản lý Dự án (PM)', 'Quản lý logic lưu trữ cấu trúc bảng công việc, sprint, backlog, danh sách phân công công việc của sinh viên và giảng viên.')"><span>Module Quản lý Dự án (PM)</span> <span>🛠️</span></li>
-              <li class="function-item" onclick="showFunction('Khảo thí', 'Thực hiện chấm điểm, thống kê điểm thi và đồng bộ kết quả sang module khảo thí chuyên biệt.')"><span>Khảo thí & Điểm</span> <span>📊</span></li>
-              <li class="function-item" onclick="showFunction('E-learning', 'Quản lý kho tài nguyên học tập số hóa, cho phép tải lên học liệu sau buổi.')"><span>E-learning (Tài liệu)</span> <span>💾</span></li>
-              <li class="function-item" onclick="showFunction('Thông báo tự động', 'Tự động gửi thông tin điểm danh, lịch học, nhắc nhở kỷ luật học tập.')"><span>Thông báo tự động</span> <span>🔔</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'he-dao-tao', 'core')"><span>Hệ đào tạo & Kỳ học</span> <span>🏫</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'nghiep-vu-lop', 'core')"><span>Nghiệp vụ Lớp học</span> <span>📅</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'quan-ly-du-an', 'core')"><span>Module Quản lý Dự án (PM)</span> <span>🛠️</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'khao-thi', 'core')"><span>Khảo thí & Điểm</span> <span>📊</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'e-learning', 'core')"><span>E-learning (Tài liệu)</span> <span>💾</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'thong-bao', 'core')"><span>Thông báo tự động</span> <span>🔔</span></li>
             </ul>
           </div>
         </div>
@@ -1599,20 +1640,20 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
           <div class="function-category" style="border-color: rgba(192,132,252,0.3)">
             <div class="category-title" style="color: var(--secondary)">🤖 AI Services (Microservices)</div>
             <ul class="function-list">
-              <li class="function-item" onclick="showFunction('AI Project Agent', 'Tự động phân tích tên đề tài/mô tả để phân rã thành các task chi tiết cho sinh viên. Đồng thời quét tiến độ, phát hiện trễ hạn để đưa vào thuật toán phân tích rủi ro.')"><span>AI Project Agent (PM)</span> <span>🪄</span></li>
-              <li class="function-item" onclick="showFunction('AI chấm BTVN / Project', 'Đọc bài nộp, đối chiếu đáp án mẫu bằng LLM để đưa ra nhận xét chi tiết và chấm điểm gợi ý.')"><span>AI chấm bài tự động</span> <span>✍️</span></li>
-              <li class="function-item" onclick="showFunction('AI Risk Score realtime', 'Tự động phân tích xu hướng nghỉ học tăng, tụt điểm nhanh, *và trễ hạn task dự án* để cảnh báo rủi ro học tập theo thời gian thực.')"><span>Risk Score thời gian thực</span> <span>🚨</span></li>
-              <li class="function-item" onclick="showFunction('Dynamic Re-Grouping', 'Tự động cập nhật nguy cơ rủi ro và điều hướng chuyển đổi nhóm học viên linh hoạt.')"><span>Dynamic Re-Grouping</span> <span>🔄</span></li>
-              <li class="function-item" onclick="showFunction('AI Assistant', 'Tóm tắt lịch sử hành vi học viên, sinh kịch bản tư vấn cho CTSV và gợi ý bài tập phụ đạo cá nhân.')"><span>Trợ lý ảo & Kịch bản</span> <span>🧠</span></li>
-              <li class="function-item" onclick="showFunction('AI báo cáo & dự đoán', 'Dashboard quản trị dự đoán nguy cơ fail môn, bảo lưu học tập và chuẩn đạt đầu ra PLO/CLO.')"><span>Dashboard Dự đoán</span> <span>📈</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'ai-project-agent', 'ai')"><span>AI Project Agent (PM)</span> <span>🪄</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'ai-cham-bai', 'ai')"><span>AI chấm bài tự động</span> <span>✍️</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'ai-risk-score', 'ai')"><span>Risk Score thời gian thực</span> <span>🚨</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'dynamic-re-grouping', 'ai')"><span>Dynamic Re-Grouping</span> <span>🔄</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'ai-assistant', 'ai')"><span>Trợ lý ảo & Kịch bản</span> <span>🧠</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'ai-dashboard', 'ai')"><span>Dashboard Dự đoán</span> <span>📈</span></li>
             </ul>
           </div>
         </div>
       </div>
 
       <div id="function-details" class="card" style="margin-top: 1.5rem; display: none;">
-        <h5 id="func-detail-title" style="font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;"></h5>
-        <p id="func-detail-desc" style="color: #cbd5e1; font-size: 0.95rem;"></p>
+        <h5 id="func-detail-title" style="font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.75rem;"></h5>
+        <div id="func-detail-desc" style="color: #cbd5e1; font-size: 0.95rem;"></div>
       </div>
     </section>
 
@@ -1935,14 +1976,216 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
       `;
     }
 
-    // Function list clicking helper
-    function showFunction(title, desc) {
+    // Detailed Function database for interactive details panel
+    const functionDetailsDb = {
+      'dang-nhap': {
+        title: '🔑 Đăng nhập hệ thống & Quản lý phiên',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Xác thực danh tính người dùng và cấp quyền truy cập tài nguyên hệ thống tương ứng với vai trò (Sinh viên, Giảng viên, CTSV, Admin).</p>
+          <ul>
+            <li><strong>Cơ chế xác thực:</strong> Sử dụng Token-based Authentication (Access Token ngắn hạn 15 phút lưu trong memory và Refresh Token dài hạn 7 ngày lưu trong HttpOnly Cookie).</li>
+            <li><strong>Tích hợp SSO:</strong> Hỗ trợ đăng nhập một chạm qua tài khoản Google/Microsoft hoặc hệ thống CAS của trường.</li>
+            <li><strong>Bảo mật:</strong> Mã hóa mật khẩu bằng bcrypt, chống brute-force bằng cách khóa tài khoản tạm thời sau 5 lần nhập sai liên tiếp và ghi log phiên hoạt động (IP, Device, Location).</li>
+          </ul>
+        `
+      },
+      'hoc-khoa-hoc': {
+        title: '📖 Học khóa học & Theo dõi tiến độ',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Không gian học tập trực tuyến dành cho sinh viên, nơi hiển thị đầy đủ tài nguyên và lộ trình của từng môn học.</p>
+          <ul>
+            <li><strong>Lộ trình học tập:</strong> Hiển thị danh sách các chương mục, bài giảng video, tài liệu đọc, slide bài giảng, bài tập trắc nghiệm và hạn nộp BTVN.</li>
+            <li><strong>Theo dõi tiến độ:</strong> Thanh tiến trình (Progress Bar) tính toán tự động dựa trên tỷ lệ hoàn thành học liệu (đã xem video > 80% thời lượng, đã hoàn thành quiz).</li>
+            <li><strong>Cá nhân hóa:</strong> Lưu lại vị trí video đang xem dở, cho phép ghi chú (bookmark) trực tiếp trên dòng thời gian của bài giảng video.</li>
+          </ul>
+        `
+      },
+      'tuong-tac-ai': {
+        title: '💬 Tương tác AI Assistant (Giao diện Chatbot)',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Cung cấp trợ lý học tập AI túc trực 24/7 giúp giải đáp thắc mắc, tóm tắt bài giảng và hướng dẫn làm bài tập.</p>
+          <ul>
+            <li><strong>Giao diện hội thoại:</strong> Thiết kế dạng chat bong bóng hiện đại, hỗ trợ định dạng Markdown, hiển thị khối code (Code block) có highlight cú pháp và công thức toán học LaTeX.</li>
+            <li><strong>Truy vấn tri thức (RAG):</strong> Khi sinh viên hỏi về kiến thức môn học, AI tự động tìm kiếm các tài liệu liên quan trong thư viện Vector Database để trả lời chính xác, đính kèm nguồn trích dẫn từ slide bài giảng của thầy cô.</li>
+            <li><strong>Lịch sử hội thoại:</strong> Lưu trữ lịch sử các phiên chat để người dùng có thể tiếp tục cuộc hội thoại trước đó.</li>
+          </ul>
+        `
+      },
+      'bang-du-an': {
+        title: '📊 Bảng quản lý dự án (Kanban/Scrum Board)',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Công cụ trực quan hóa quản lý công việc và đồ án nhóm dành cho cả sinh viên và giảng viên.</p>
+          <ul>
+            <li><strong>Bảng Sinh viên:</strong> Cho phép trưởng nhóm lập kế hoạch Sprint, tạo task, kéo thả thẻ công việc giữa các cột (To-Do, In Progress, Review, Done), phân công thành viên và đặt Deadline.</li>
+            <li><strong>Bảng Giảng viên:</strong> Theo dõi tiến độ của tất cả các nhóm trong lớp học, xem thống kê biểu đồ Burndown Chart và xem các task bị trễ hạn để kịp thời nhắc nhở.</li>
+            <li><strong>Đồng bộ thời gian thực:</strong> Sử dụng Socket.io giúp cập nhật trạng thái kéo thả thẻ ngay lập tức trên màn hình của tất cả thành viên trong nhóm.</li>
+          </ul>
+        `
+      },
+      'api-gateway': {
+        title: '🛡️ API Gateway & Bảo mật',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Cổng điều hướng tập trung làm nhiệm vụ bảo vệ, lọc và phân luồng toàn bộ Request đi vào hệ thống.</p>
+          <ul>
+            <li><strong>Định tuyến (Routing):</strong> Điều hướng chính xác request từ Client đến Modular Monolith (LMS Core) hoặc FastAPI (AI Services).</li>
+            <li><strong>Xác thực & Phân quyền:</strong> Giải mã JWT token để xác định vai trò người dùng trước khi chuyển tiếp request vào bên trong hệ thống.</li>
+            <li><strong>Chống tấn công:</strong> Giới hạn tần suất yêu cầu (Rate Limiting) để chống DDOS và lọc sạch các mã độc hại (SQL Injection, XSS) trong payload đầu vào.</li>
+          </ul>
+        `
+      },
+      'he-dao-tao': {
+        title: '🏫 Quản lý Hệ đào tạo & Chương trình học',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Định nghĩa cấu trúc khung chương trình đào tạo của từng hệ học (Chất lượng cao, Hệ chuẩn, Hệ liên thông, Học lại) và phân bổ kỳ học.</p>
+          <ul>
+            <li><strong>Khung chương trình:</strong> Quản lý danh sách môn học bắt buộc và tự chọn, số tín chỉ, điều kiện tiên quyết (phải qua môn A mới được học môn B).</li>
+            <li><strong>Bộ trọng số điểm (Scoring Weights):</strong> Cấu hình tỷ lệ điểm (Chuyên cần, Bài tập, Thi giữa kỳ, Thi cuối kỳ) theo từng hệ học cụ thể. Sinh viên hệ chất lượng cao và hệ thường học chung lớp vật lý sẽ được áp dụng bộ trọng số riêng biệt dựa trên liên kết chương trình học cá nhân.</li>
+          </ul>
+        `
+      },
+      'nghiep-vu-lop': {
+        title: '📅 Nghiệp vụ Lớp học vật lý',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Quản lý các hoạt động diễn ra trong phạm vi một lớp học cụ thể theo thời gian thực.</p>
+          <ul>
+            <li><strong>Thời khóa biểu & Điểm danh:</strong> Giảng viên ghi nhận chuyên cần bằng quét mã QR động (thay đổi sau mỗi 5 giây chống điểm danh hộ) hoặc điểm danh thủ công.</li>
+            <li><strong>Đơn xin nghỉ phép:</strong> Học viên nộp đơn online đính kèm minh chứng (giấy khám bệnh, ảnh chụp lý do). Hệ thống tự động chuyển giảng viên phê duyệt và tự trừ điểm chuyên cần hợp lệ.</li>
+            <li><strong>Chia nhóm (Grouping):</strong> Hỗ trợ chia nhóm tự động (ngẫu nhiên, theo học lực đồng đều) hoặc chia nhóm thủ công để làm đồ án môn học.</li>
+          </ul>
+        `
+      },
+      'quan-ly-du-an': {
+        title: '🛠️ Module Quản lý Dự án (LMS Core PM)',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Cung cấp tầng logic dữ liệu nghiệp vụ quản lý dự án nằm trong LMS Core.</p>
+          <ul>
+            <li><strong>Data Model:</strong> Quản lý lưu trữ thông tin thực thể Dự án (Project), Sprint, Backlog Item, Thẻ công việc (Task) và các liên kết khóa ngoại với Sinh viên/Giảng viên.</li>
+            <li><strong>Tính toán chỉ số trễ hạn:</strong> Background job quét các task đã quá deadline mà chưa chuyển sang trạng thái "Done". Ghi nhận số ngày trễ hạn của từng sinh viên vào database để AI Services làm đầu vào tính Risk Score.</li>
+          </ul>
+        `
+      },
+      'khao-thi': {
+        title: '📊 Module Khảo thí & Tính GPA',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Quản lý điểm số toàn diện và thực hiện các tính toán học vụ phức tạp.</p>
+          <ul>
+            <li><strong>Nhập điểm:</strong> Cho phép giảng viên nhập điểm trực tiếp hoặc import từ file Excel. Khóa sổ điểm (Lock grade) sau thời hạn công bố điểm để chống sửa đổi tùy tiện.</li>
+            <li><strong>Đồng nhất mã gốc (base_subject_id):</strong> Khi tính điểm trung bình tích lũy (GPA) và xử lý học lại, engine sẽ nhóm các môn học có ID khác nhau giữa các khóa (ví dụ môn C của K24 và K25) về chung một mã môn gốc để tự động thay thế điểm cũ bằng điểm mới cao hơn.</li>
+          </ul>
+        `
+      },
+      'e-learning': {
+        title: '💾 Quản lý Học liệu số (E-learning)',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Lưu trữ và phân phối tài liệu, video bài giảng phục vụ học tập tự chủ của sinh viên.</p>
+          <ul>
+            <li><strong>Đa dạng định dạng:</strong> Hỗ trợ PDF, Slide (PPTX), Video (MP4), File nén (ZIP) và các liên kết ngoài.</li>
+            <li><strong>Tối ưu hóa băng thông:</strong> Tích hợp CDN (Content Delivery Network) giúp tải tài liệu nhanh. Video bài giảng được phân giải động (HLS Streaming) tự động chuyển đổi chất lượng 360p/720p/1080p tùy theo tốc độ mạng của người học.</li>
+          </ul>
+        `
+      },
+      'thong-bao': {
+        title: '🔔 Hệ thống thông báo tự động',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Đảm bảo thông tin học vụ quan trọng được truyền đạt kịp thời tới đúng đối tượng.</p>
+          <ul>
+            <li><strong>Đa kênh (Omnichannel):</strong> Gửi thông báo qua App Notification (In-App), Email, và tin nhắn SMS hoặc Lark/Base Webhook đối với các thông báo khẩn cấp.</li>
+            <li><strong>Trigger tự động:</strong> Kích hoạt gửi thông báo khi sinh viên bị giảng viên đánh giá vắng học không phép, khi có điểm thi mới, khi deadline task dự án còn 24 giờ, hoặc khi có cảnh báo kỷ luật.</li>
+          </ul>
+        `
+      },
+      'ai-project-agent': {
+        title: '🪄 AI Project Agent (Tự động phân rã & Quét tiến độ)',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Trợ lý AI chuyên trách hỗ trợ quản lý dự án nhóm và thúc đẩy tiến độ tự động.</p>
+          <ul>
+            <li><strong>Tự động phân rã công việc (Project Breakdown):</strong> Giảng viên chỉ cần nhập tên đề tài và mô tả ngắn. AI Agent sẽ phân tích và tự động sinh ra danh sách 5-10 thẻ công việc (Backlog tasks) chi tiết (mô tả task, tiêu chí hoàn thành, gợi ý công nghệ) và đẩy thẳng vào bảng Kanban của nhóm.</li>
+            <li><strong>Giám sát trễ hạn:</strong> AI Agent quét bảng Kanban của các nhóm hàng ngày. Nếu phát hiện thành viên trễ deadline các task quan trọng (Critical path) quá 3 ngày, AI sẽ tự động gửi cảnh báo và tăng điểm số rủi ro (Risk Score) của sinh viên đó lên.</li>
+          </ul>
+        `
+      },
+      'ai-cham-bai': {
+        title: '✍️ AI chấm bài tự động & Nhận xét gợi ý',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Hỗ trợ giảng viên giảm tải áp lực chấm bài tập về nhà và các báo cáo tiến độ đồ án.</p>
+          <ul>
+            <li><strong>Đối chiếu đáp án bằng LLM:</strong> AI đọc tệp bài nộp của sinh viên (file code, file PDF báo cáo) và so sánh với đáp án mẫu/rubric chấm điểm của giảng viên thông qua Prompt Engineering nâng cao.</li>
+            <li><strong>Sinh nhận xét chi tiết:</strong> AI chỉ ra chính xác sinh viên đã làm tốt phần nào, phần nào bị thiếu hoặc sai sót kiến thức, đồng thời đưa ra điểm số gợi ý để giảng viên duyệt nhanh chỉ bằng một click.</li>
+          </ul>
+        `
+      },
+      'ai-risk-score': {
+        title: '🚨 Dự báo Risk Score thời gian thực',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Cảnh báo sớm nguy cơ trượt môn, nghỉ học hoặc bảo lưu của sinh viên.</p>
+          <ul>
+            <li><strong>Thuật toán phân tích rủi ro:</strong> Chạy mô hình học máy phân tích đa chiều dữ liệu: tần suất vắng học, điểm số bài kiểm tra xu hướng giảm, số ngày trễ hạn task dự án (đầu vào từ PM module), và mức độ tương tác học liệu trên hệ thống.</li>
+            <li><strong>Phân loại rủi ro:</strong> Gán mức độ rủi ro (Thấp, Trung bình, Cao) kèm theo biểu đồ phân tích nguyên nhân cốt lõi để Cố vấn học tập/CTSV có phương án hỗ trợ kịp thời.</li>
+          </ul>
+        `
+      },
+      'dynamic-re-grouping': {
+        title: '🔄 Cơ chế Dynamic Re-Grouping',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Tự động điều chỉnh nhóm học tập để tối ưu hóa hiệu quả kèm cặp đồng đẳng.</p>
+          <ul>
+            <li><strong>Phát hiện nhóm mất cân bằng:</strong> Khi một nhóm dự án có quá nhiều thành viên bị cảnh báo Risk Score cao (học lực yếu hoặc trễ task liên tục), hệ thống sẽ phát tín hiệu cảnh báo mất cân bằng tiến độ.</li>
+            <li><strong>Gợi ý cơ cấu lại:</strong> Hệ thống đề xuất giảng viên điều chuyển, ghép nối sinh viên khá giỏi hỗ trợ nhóm yếu, hoặc tái cấu trúc lại nhóm học tập phụ đạo dựa trên các tiêu chí tương thích về lịch rảnh và kỹ năng.</li>
+          </ul>
+        `
+      },
+      'ai-assistant': {
+        title: '🧠 Trợ lý Cố vấn & Kịch bản Chăm sóc tự động',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Cung cấp công cụ hỗ trợ Cố vấn học tập và phòng CTSV xử lý nhanh các trường hợp sinh viên gặp khó khăn.</p>
+          <ul>
+            <li><strong>Tóm tắt hành vi học viên:</strong> AI tổng hợp toàn bộ lịch sử học tập, ý thức chuyên cần và các cảnh báo rủi ro của sinh viên thành một báo cáo ngắn gọn dài 3 dòng.</li>
+            <li><strong>Sinh kịch bản tư vấn:</strong> AI tự động soạn thảo nội dung thư nhắc nhở, kịch bản trao đổi trực tiếp hoặc email gửi phụ huynh học sinh cá nhân hóa theo đúng tình trạng của sinh viên (nhóm A, B, C, D).</li>
+          </ul>
+        `
+      },
+      'ai-dashboard': {
+        title: '📈 Dashboard Quản trị & Dự báo Xu hướng học thuật',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Giúp Ban giám hiệu và Phòng đào tạo có cái nhìn tổng quan dài hạn về chất lượng dạy và học.</p>
+          <ul>
+            <li><strong>Báo cáo dự báo học vụ:</strong> Thống kê trực quan tỷ lệ sinh viên có nguy cơ fail môn theo từng khoa, từng khóa học. Dự báo tỷ lệ sinh viên ra trường đúng hạn.</li>
+            <li><strong>Đánh giá chuẩn đầu ra (PLO/CLO):</strong> AI phân tích ma trận điểm thi để đánh giá mức độ đạt chuẩn đầu ra chương trình đào tạo của sinh viên, từ đó gợi ý cải tiến khung chương trình học cho phù hợp.</li>
+          </ul>
+        `
+      }
+    };
+
+    // Click handler for function tree items
+    function showDetailedFunction(el, key, category) {
+      // Clear active classes from all function items
+      document.querySelectorAll('.function-item').forEach(item => {
+        item.classList.remove('active-gateway', 'active-core', 'active-ai');
+      });
+
+      // Add active class according to category
+      el.classList.add(`active-${category}`);
+
+      const details = functionDetailsDb[key];
       const panel = document.getElementById('function-details');
       const titleEl = document.getElementById('func-detail-title');
       const descEl = document.getElementById('func-detail-desc');
+
+      titleEl.innerText = details.title;
       
-      titleEl.innerText = title;
-      descEl.innerText = desc;
+      // Dynamic title color based on category
+      if (category === 'gateway') {
+        titleEl.style.color = 'var(--primary)';
+        panel.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+      } else if (category === 'core') {
+        titleEl.style.color = '#34d399';
+        panel.style.borderColor = 'rgba(52, 211, 153, 0.2)';
+      } else {
+        titleEl.style.color = 'var(--secondary)';
+        panel.style.borderColor = 'rgba(192, 132, 252, 0.2)';
+      }
+
+      descEl.innerHTML = details.desc;
       panel.style.display = 'block';
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
