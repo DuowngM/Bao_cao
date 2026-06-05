@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS AI - Kế Hoạch Triển Khai & Quản Lý Dự Án</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #080d16;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-card-hover: rgba(24, 33, 53, 0.85);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.15);
+      --secondary: #c084fc;
+      --secondary-glow: rgba(192, 132, 252, 0.15);
+      --success: #34d399;
+      --success-glow: rgba(52, 211, 153, 0.15);
+      --warning: #fbbf24;
+      --warning-glow: rgba(251, 191, 36, 0.15);
+      --danger: #f87171;
+      --danger-glow: rgba(248, 113, 113, 0.15);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --toc-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Ambient background glows */
+    .bg-glows {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.12;
+    }
+
+    .glow-1 {
+      top: -200px;
+      left: 20%;
+      background: var(--primary);
+    }
+
+    .glow-2 {
+      bottom: -100px;
+      right: 15%;
+      background: var(--secondary);
+    }
+
+    /* Floating Navigation (TOC) */
+    aside {
+      width: var(--toc-width);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background: rgba(9, 13, 22, 0.6);
+      backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 1.75rem;
+      z-index: 100;
+    }
+
+    .toc-brand {
+      margin-bottom: 2.5rem;
+    }
+
+    .toc-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .toc-subtitle {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    .toc-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex-grow: 1;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+      border-left: 2px solid transparent;
+    }
+
+    .toc-link:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+    }
+
+    .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-glow);
+      border-left-color: var(--primary);
+    }
+
+    .toc-footer {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      text-align: center;
+    }
+
+    /* Main Content Container */
+    main {
+      margin-left: var(--toc-width);
+      flex-grow: 1;
+      padding: 3rem 4rem;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 5rem;
+    }
+
+    /* Section Styles */
+    section {
+      scroll-margin-top: 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background: var(--primary-glow);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-badge.purple {
+      background: var(--secondary-glow);
+      border-color: rgba(192, 132, 252, 0.3);
+      color: var(--secondary);
+    }
+
+    .section-badge.success {
+      background: var(--success-glow);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--success);
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.75px;
+      color: var(--text-main);
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      max-width: 850px;
+      line-height: 1.6;
+    }
+
+    /* Dashboard Cards */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.25rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Overview Stats Layout */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2.5rem;
+    }
+
+    .overview-text {
+      line-height: 1.75;
+      font-size: 1.05rem;
+      color: #cbd5e1;
+    }
+
+    .overview-text p {
+      margin-bottom: 1.25rem;
+    }
+
+    .stats-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      justify-content: center;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .stat-box:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+    }
+
+    .stat-box.secondary .stat-icon {
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--secondary);
+    }
+
+    .stat-info h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .stat-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* SVG Interactive Architecture Styling */
+    .arch-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .arch-diagram-wrapper {
+      background: rgba(5, 7, 12, 0.4);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    svg .node {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    svg .node rect {
+      fill: #1e293b;
+      stroke: var(--border-color);
+      stroke-width: 1.5px;
+      rx: 8px;
+      transition: all 0.3s ease;
+    }
+
+    svg .node:hover rect {
+      stroke: var(--primary);
+      fill: #1e293b;
+      filter: drop-shadow(0px 0px 8px var(--primary-glow));
+    }
+
+    svg .node.accent rect {
+      stroke: var(--secondary);
+    }
+
+    svg .node.accent:hover rect {
+      stroke: var(--secondary);
+      filter: drop-shadow(0px 0px 8px var(--secondary-glow));
+    }
+
+    svg .node.gateway rect {
+      fill: rgba(56, 189, 248, 0.05);
+      stroke: var(--primary);
+      stroke-width: 2px;
+    }
+
+    svg .node.gateway:hover rect {
+      fill: rgba(56, 189, 248, 0.1);
+    }
+
+    svg .node text.title {
+      fill: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    svg .node text.subtitle {
+      fill: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px;
+    }
+
+    svg line, svg path {
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 1.5px;
+      fill: none;
+      transition: all 0.3s ease;
+    }
+
+    svg marker path {
+      fill: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Interactivity via JS classes */
+    svg.highlight-mode line, svg.highlight-mode path {
+      stroke: rgba(255, 255, 255, 0.03);
+    }
+
+    svg.highlight-mode .highlight-line {
+      stroke: var(--primary) !important;
+      stroke-width: 2.5px !important;
+    }
+
+    svg.highlight-mode .highlight-line-secondary {
+      stroke: var(--secondary) !important;
+      stroke-width: 2.5px !important;
+    }
+
+    svg.highlight-mode marker path {
+      fill: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    svg.highlight-mode .highlight-marker path {
+      fill: var(--primary) !important;
+    }
+    
+    svg.highlight-mode .highlight-marker-secondary path {
+      fill: var(--secondary) !important;
+    }
+
+    .arch-details-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 100px;
+      transition: all 0.3s ease;
+    }
+
+    .arch-details-panel h5 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Timeline Section Styles */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      left: 7px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--success));
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -2rem;
+      top: 0.5rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 4px solid var(--primary);
+      z-index: 2;
+    }
+
+    .timeline-item:nth-child(2) .timeline-dot {
+      border-color: var(--secondary);
+    }
+
+    .timeline-item:nth-child(3) .timeline-dot {
+      border-color: var(--success);
+    }
+
+    .timeline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .timeline-phase {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .timeline-item:nth-child(2) .timeline-phase { color: var(--secondary); }
+    .timeline-item:nth-child(3) .timeline-phase { color: var(--success); }
+
+    .timeline-badge {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .timeline-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .timeline-content {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-content:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .timeline-list {
+      list-style: none;
+    }
+
+    .timeline-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.85rem;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.55;
+    }
+
+    .timeline-list li::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+    }
+
+    .timeline-item:nth-child(2) .timeline-list li::before { color: var(--secondary); }
+    .timeline-item:nth-child(3) .timeline-list li::before { color: var(--success); }
+
+    /* Collapsible Functional Grid */
+    .function-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+    }
+
+    .function-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .function-category {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.01);
+      height: 100%;
+    }
+
+    .category-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.6rem;
+    }
+
+    .function-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .function-item {
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-color);
+      padding: 0.7rem 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .function-item:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateX(4px);
+    }
+
+    /* CSSV Section Styles */
+    .cssv-flow {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 2.5rem;
+    }
+
+    .flowchart-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .flowchart-vertical::after {
+      content: '';
+      position: absolute;
+      top: 2rem;
+      bottom: 2rem;
+      left: 24px;
+      width: 2px;
+      background: rgba(255,255,255,0.05);
+      z-index: 1;
+    }
+
+    .flowchart-step {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      z-index: 2;
+      transition: all 0.25s ease;
+    }
+
+    .flowchart-step:hover {
+      border-color: var(--primary-glow);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: 1px solid var(--primary);
+      flex-shrink: 0;
+    }
+
+    .step-text h6 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .step-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Grouping cards */
+    .group-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .group-card {
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.01);
+      padding: 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .group-card.active {
+      border-color: var(--accent-color, var(--primary));
+      background: var(--accent-glow, var(--primary-glow));
+      box-shadow: 0 4px 20px var(--accent-glow, var(--primary-glow));
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .group-name {
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .group-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      font-weight: 600;
+    }
+
+    .group-rule {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .group-detail-panel {
+      margin-top: 1.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      background: rgba(0,0,0,0.25);
+      min-height: 180px;
+      transition: all 0.3s ease;
+    }
+
+    .group-detail-panel h5 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    /* AI Pipeline Section Styles */
+    .pipeline-container {
+      background: rgba(5,7,12,0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      overflow-x: auto;
+    }
+
+    .pipeline-flow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 800px;
+    }
+
+    .pipe-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1rem 1.2rem;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      width: 140px;
+      transition: all 0.3s ease;
+    }
+
+    .pipe-node h6 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .pipe-node p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .pipe-node.glow {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .pipe-connector {
+      flex-grow: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border-color), var(--primary), var(--border-color));
+      min-width: 25px;
+      position: relative;
+    }
+
+    .pipe-connector::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 6px var(--primary);
+      animation: pipeFlow 2.5s infinite linear;
+    }
+
+    .pipe-connector:nth-child(even)::after {
+      animation-delay: 1.25s;
+    }
+
+    @keyframes pipeFlow {
+      0% { left: 0%; }
+      100% { left: 100%; }
+    }
+
+    /* ========================================================
+       NEW JIRA PROJECT MANAGEMENT SECTION
+       ======================================================== */
+    .pm-toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .pm-switch {
+      display: flex;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      padding: 0.3rem;
+      border-radius: 30px;
+    }
+
+    .pm-switch-btn {
+      padding: 0.5rem 1.25rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .pm-switch-btn.active {
+      background: var(--primary);
+      color: var(--bg-dark);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .pm-switch-btn.active.secondary {
+      background: var(--secondary);
+      box-shadow: 0 0 10px var(--secondary-glow);
+    }
+
+    .pm-board-layout {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      background: rgba(5,7,12,0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      min-height: 420px;
+    }
+
+    .kanban-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .kanban-col-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid rgba(255,255,255,0.03);
+      margin-bottom: 0.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kanban-col:nth-child(2) .kanban-col-header { color: var(--warning); }
+    .kanban-col:nth-child(3) .kanban-col-header { color: var(--success); }
+
+    .kanban-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .kanban-card:hover {
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    .kanban-card.warning {
+      border-left: 3px solid var(--danger);
+    }
+
+    .kanban-card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .kanban-card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .kanban-card-user {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(255,255,255,0.04);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .user-avatar {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--secondary);
+      display: inline-block;
+    }
+
+    /* AI PM Panel Styling */
+    .ai-pm-panel {
+      background: rgba(5,7,12,0.4);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .ai-pm-header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ai-pm-btn {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      border: none;
+      border-radius: 8px;
+      color: var(--bg-dark);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(192, 132, 252, 0.2);
+    }
+
+    .ai-pm-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(192, 132, 252, 0.3);
+    }
+
+    .ai-pm-output {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.85rem;
+      font-family: 'Outfit', sans-serif;
+      min-height: 120px;
+    }
+
+    .ai-task-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .ai-task-item {
+      padding: 0.4rem 0.6rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: fadeIn 0.4s ease-out forwards;
+      opacity: 0;
+    }
+
+    .ai-task-item.done {
+      border-left: 3px solid var(--success);
+    }
+
+    .ai-task-item.progress {
+      border-left: 3px solid var(--warning);
+    }
+
+    .ai-warning-box {
+      background: rgba(248, 113, 113, 0.05);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .ai-warning-icon {
+      font-size: 1.25rem;
+      color: var(--danger);
+      line-height: 1;
+    }
+
+    .ai-warning-text h7 {
+      font-weight: 600;
+      color: var(--danger);
+      font-size: 0.85rem;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .ai-warning-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Old System Issues & Solutions */
+    .issues-section {
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 2.5rem;
+    }
+
+    .issues-title-sub {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .issues-grid-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .issues-grid-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .issue-card-item {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .issue-card-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(239, 68, 68, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .issue-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .issue-badge {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .issue-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #f1f5f9;
+    }
+
+    .issue-content {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #94a3b8;
+      padding-left: 0.75rem;
+      border-left: 2px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .solution-content {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      padding-left: 0.75rem;
+      border-left: 2px solid rgba(52, 211, 153, 0.3);
+      background: rgba(52, 211, 153, 0.02);
+      padding: 0.75rem;
+      border-radius: 6px;
+    }
+
+    .solution-content strong {
+      color: var(--success);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      aside {
+        display: none;
+      }
+      main {
+        margin-left: 0;
+        padding: 2rem;
+      }
+      .overview-grid, .cssv-flow, .timeline-grid, .pm-board-layout {
+        grid-template-columns: 1fr;
+      }
+      .function-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glows">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+  </div>
+
+  <!-- Sidebar Table of Contents -->
+  <aside>
+    <div class="toc-brand">
+      <span class="toc-title">LMS AI</span>
+      <span class="toc-subtitle">Kế Hoạch Triển Khai</span>
+    </div>
+    
+    <ul class="toc-menu">
+      <li><a href="#tong-quan" class="toc-link active" onclick="setActiveLink(this)"><span>📝</span><span>1. Tổng quan kế hoạch</span></a></li>
+      <li><a href="#kien-truc" class="toc-link" onclick="setActiveLink(this)"><span>📐</span><span>2. Kiến trúc hệ thống</span></a></li>
+      <li><a href="#loi-trinh" class="toc-link" onclick="setActiveLink(this)"><span>📅</span><span>3. Lộ trình triển khai</span></a></li>
+      <li><a href="#chuc-nang" class="toc-link" onclick="setActiveLink(this)"><span>🌿</span><span>4. Cây chức năng</span></a></li>
+      <li><a href="#cssv" class="toc-link" onclick="setActiveLink(this)"><span>👥</span><span>5. Quy trình CSSV</span></a></li>
+      <li><a href="#ai-pipeline" class="toc-link" onclick="setActiveLink(this)"><span>⚡</span><span>6. AI Services Pipeline</span></a></li>
+      <li><a href="#quan-ly-du-an" class="toc-link" onclick="setActiveLink(this)"><span>📊</span><span>7. Bảng Quản Lý Dự Án</span></a></li>
+    </ul>
+
+    <div class="toc-footer">
+      <span>LMS AI Dashboard - Production v1.2</span>
+    </div>
+  </aside>
+
+  <!-- Main Content Scroll -->
+  <main>
+
+    <!-- SECTION 1: Tổng quan -->
+    <section id="tong-quan">
+      <div class="section-header">
+        <span class="section-badge">Giới thiệu</span>
+        <h2 class="section-title">Kế Hoạch Phát Triển Hệ Thống LMS AI</h2>
+        <p class="section-desc">Dự án Tích hợp Trí tuệ Nhân tạo hỗ trợ đào tạo và chăm sóc học viên toàn diện.</p>
+      </div>
+
+      <div class="card">
+        <div class="overview-grid">
+          <div class="overview-text">
+            <p><strong>Mục tiêu chính:</strong> Tự động hóa hoàn toàn quy trình theo dõi, phân loại và cảnh báo sớm rủi ro học tập của sinh viên. Hệ thống được kỳ vọng giảm thiểu lên tới <strong>80% các tác vụ thủ công</strong> cho phòng Công tác Sinh viên (CTSV) và Giảng viên nhờ các tính năng AI/LLM.</p>
+            <p><strong>Định hướng kiến trúc:</strong> Mô hình lai <strong>Hybrid Architecture</strong>.</p>
+            <ul style="list-style: none; padding-left: 1rem; margin-top: 0.5rem;">
+              <li style="margin-bottom: 0.5rem;">🔹 <strong>LMS Core (Modular Monolith)</strong>: Đảm bảo tính liên kết chặt chẽ của các nghiệp vụ đào tạo cơ bản (môn học, lớp học, điểm danh, thời khóa biểu, điểm số), giúp đồng bộ dữ liệu nhanh và dễ triển khai. Bổ sung thêm Module Quản Lý Dự Án (PM).</li>
+              <li style="margin-bottom: 0.5rem;">🔹 <strong>AI Services (Microservices)</strong>: Thiết kế tách rời thành các service nhỏ độc lập do tính chất cần tài nguyên phần cứng lớn (GPU), dễ dàng cấu hình/nâng cấp các mô hình LLM và Vector Database theo thực tế. Bổ sung AI Project Agent phân rã task.</li>
+            </ul>
+          </div>
+          <div class="stats-column">
+            <div class="stat-box">
+              <div class="stat-icon">🏛️</div>
+              <div class="stat-info">
+                <h4>Modular Monolith</h4>
+                <p>Nghiệp vụ lõi đồng bộ</p>
+              </div>
+            </div>
+            <div class="stat-box secondary">
+              <div class="stat-icon">🤖</div>
+              <div class="stat-info">
+                <h4>Microservices AI</h4>
+                <p>Mở rộng độc lập linh hoạt</p>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <!-- Subsection 1.2: Old System Issues & New Solutions -->
+      <div class="issues-section">
+        <h3 class="issues-title-sub">⚠️ Khảo Sát Hiện Trạng & Vấn Đề Hệ Thế Cũ</h3>
+        
+        <div class="issues-grid-list">
+          <!-- Issue 1 -->
+          <div class="issue-card-item">
+            <div class="issue-header">
+              <span class="issue-badge">Vấn đề 1</span>
+              <span class="issue-title">Sinh viên các hệ học khác nhau học cùng 1 lớp</span>
+            </div>
+            <div class="issue-content">
+              Ràng buộc chương trình học và cơ cấu trọng số điểm theo Lớp (Class), dẫn đến việc sinh viên Chất lượng cao, hệ chuẩn, hoặc sinh viên học lại chung một lớp không thể áp dụng thang điểm khác nhau.
+            </div>
+            <div class="solution-content">
+              <strong>✔ Giải pháp hệ thống mới:</strong> Tách biệt thực thể <strong>Lớp học vật lý (ClassSession)</strong> khỏi <strong>Chương trình học của Sinh viên (StudentCurriculum)</strong>. Hệ thống tự động ánh xạ bộ trọng số điểm theo hệ đào tạo riêng của từng sinh viên.
+            </div>
+          </div>
+
+          <!-- Issue 2 -->
+          <div class="issue-card-item">
+            <div class="issue-header">
+              <span class="issue-badge">Vấn đề 2</span>
+              <span class="issue-title">Lưu lại dữ liệu lớp học sau từng môn học</span>
+            </div>
+            <div class="issue-content">
+              Khi lớp kết thúc môn học và chuyển sang môn học mới, dữ liệu lịch sử môn cũ (giảng viên phụ trách, tỷ lệ chuyên cần, điểm số) bị ghi đè hoặc thất lạc, không thể tra cứu.
+            </div>
+            <div class="solution-content">
+              <strong>✔ Giải pháp hệ thống mới:</strong> Thiết kế bảng lịch sử <code>class_course_history</code> để lưu trữ snapshot tự động sau khi kết thúc môn học (Mã lớp, Mã môn, Giảng viên, Chuyên cần, Điểm trung bình).
+            </div>
+          </div>
+
+          <!-- Issue 3 -->
+          <div class="issue-card-item">
+            <div class="issue-header">
+              <span class="issue-badge">Vấn đề 3</span>
+              <span class="issue-title">Sinh viên học lại và chuyển hệ học</span>
+            </div>
+            <div class="issue-content">
+              Khó kiểm soát lộ trình môn học bắt buộc khi sinh viên chuyển từ hệ Chất lượng cao sang hệ Thường (hoặc ngược lại) do danh sách môn học của từng hệ bị cố định.
+            </div>
+            <div class="solution-content">
+              <strong>✔ Giải pháp hệ thống mới:</strong> Xây dựng bảng quy đổi tương đương <code>course_equivalents</code> và quản lý lộ trình học thông qua <code>IndividualStudyPlan</code> (Chương trình học cá nhân hóa).
+            </div>
+          </div>
+
+          <!-- Issue 4 -->
+          <div class="issue-card-item">
+            <div class="issue-header">
+              <span class="issue-badge">Vấn đề 4</span>
+              <span class="issue-title">Đồng nhất môn học khác ID giữa các khóa</span>
+            </div>
+            <div class="issue-content">
+              Ví dụ môn C của khóa K24 (ID: 101) và khóa K25 (ID: 202) có ID khác nhau trong chương trình học. Khi sinh viên K24 học lại lớp K25, hệ thống cũ không tự nhận diện điểm học lại.
+            </div>
+            <div class="solution-content">
+              <strong>✔ Giải pháp hệ thống mới:</strong> Ánh xạ môn học về một mã môn học gốc chung (<code>base_subject_id</code>). GPA engine tự động gom nhóm theo mã gốc để thực hiện thay thế điểm học lại.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Kiến trúc -->
+    <section id="kien-truc">
+      <div class="section-header">
+        <span class="section-badge">Kiến trúc</span>
+        <h2 class="section-title">Sơ đồ Kiến Trúc Tổng Thể (Hybrid)</h2>
+        <p class="section-desc">Click vào các thành phần trong sơ đồ dưới đây để xem vai trò và mô tả chi tiết của từng khối. *Đã cập nhật Module Quản lý Dự án & AI Project Agent*</p>
+      </div>
+
+      <div class="card arch-container">
+        <div class="arch-diagram-wrapper">
+          <svg viewBox="0 0 800 480" width="100%" height="auto" id="svg-arch">
+            <!-- Markers for Arrows -->
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(255,255,255,0.3)"/>
+              </marker>
+            </defs>
+
+            <!-- CONNECTIONS (PATHS) -->
+            <!-- Client to Gateway -->
+            <path d="M 400 90 L 400 132" marker-end="url(#arrow)" id="line-client-gateway"/>
+            <!-- Gateway to Auth -->
+            <path d="M 330 170 L 175 222" marker-end="url(#arrow)" id="line-gateway-auth"/>
+            <!-- Gateway to Core -->
+            <path d="M 400 190 L 400 212" marker-end="url(#arrow)" id="line-gateway-core"/>
+            <!-- Gateway to AI -->
+            <path d="M 470 170 L 625 222" marker-end="url(#arrow)" id="line-gateway-ai"/>
+            
+            <!-- Core <--> AI Sync -->
+            <path d="M 490 245 L 530 245" marker-end="url(#arrow)" id="line-core-ai-1"/>
+            <path d="M 530 255 L 490 255" marker-end="url(#arrow)" id="line-core-ai-2"/>
+
+            <!-- Core to RDB/NoSQL -->
+            <path d="M 360 275 L 310 332" marker-end="url(#arrow)" id="line-core-rdb"/>
+            <!-- AI to Vector DB -->
+            <path d="M 640 275 L 640 332" marker-end="url(#arrow)" id="line-ai-vdb"/>
+            
+            <!-- Core to Ext Systems -->
+            <path d="M 400 275 L 400 332" marker-end="url(#arrow)" id="line-core-ext"/>
+
+            <!-- NODES -->
+            <!-- Client Layer -->
+            <g class="node" onclick="highlightArch('client')">
+              <rect x="290" y="30" width="220" height="60" />
+              <text x="400" y="55" dominant-baseline="middle" text-anchor="middle" class="title">Web / App Client</text>
+              <text x="400" y="75" dominant-baseline="middle" text-anchor="middle" class="subtitle">Đăng nhập, Học tập, Bảng Dự án</text>
+            </g>
+
+            <!-- API Gateway Layer -->
+            <g class="node gateway" onclick="highlightArch('gateway')">
+              <rect x="290" y="130" width="220" height="60" />
+              <text x="400" y="155" dominant-baseline="middle" text-anchor="middle" class="title" style="fill: var(--primary)">API Gateway</text>
+              <text x="400" y="175" dominant-baseline="middle" text-anchor="middle" class="subtitle" style="fill: var(--primary)">Điều hướng, Xác thực, Phân quyền</text>
+            </g>
+
+            <!-- Services Layer -->
+            <!-- Auth -->
+            <g class="node accent" onclick="highlightArch('auth')">
+              <rect x="65" y="215" width="180" height="60" />
+              <text x="155" y="240" dominant-baseline="middle" text-anchor="middle" class="title" style="fill: var(--secondary)">Auth Service</text>
+              <text x="155" y="260" dominant-baseline="middle" text-anchor="middle" class="subtitle">Quản lý phiên, Đăng nhập</text>
+            </g>
+            <!-- Core -->
+            <g class="node" onclick="highlightArch('core')">
+              <rect x="310" y="215" width="180" height="60" />
+              <text x="400" y="240" dominant-baseline="middle" text-anchor="middle" class="title">LMS Core Monolith</text>
+              <text x="400" y="260" dominant-baseline="middle" text-anchor="middle" class="subtitle">Lớp học, *Module Quản lý Dự án*</text>
+            </g>
+            <!-- AI -->
+            <g class="node accent" onclick="highlightArch('ai')">
+              <rect x="550" y="215" width="180" height="60" />
+              <text x="640" y="240" dominant-baseline="middle" text-anchor="middle" class="title" style="fill: var(--secondary)">AI Services</text>
+              <text x="640" y="260" dominant-baseline="middle" text-anchor="middle" class="subtitle">RAG, Risk Score, *AI Project Agent*</text>
+            </g>
+
+            <!-- Databases & Externals -->
+            <!-- RDB/NoSQL -->
+            <g class="node" onclick="highlightArch('db')">
+              <rect x="220" y="335" width="160" height="55" />
+              <text x="300" y="357" dominant-baseline="middle" text-anchor="middle" class="title" style="font-size: 13px">RDB / NoSQL DB</text>
+              <text x="300" y="375" dominant-baseline="middle" text-anchor="middle" class="subtitle">Dữ liệu lõi & Dự án (Tasks)</text>
+            </g>
+            <!-- Ext Systems -->
+            <g class="node" onclick="highlightArch('ext')">
+              <rect x="395" y="335" width="140" height="55" />
+              <text x="465" y="357" dominant-baseline="middle" text-anchor="middle" class="title" style="font-size: 13px">Hệ thống Ngoài</text>
+              <text x="465" y="375" dominant-baseline="middle" text-anchor="middle" class="subtitle">Khảo thí, Lark/Base, 1 Cửa</text>
+            </g>
+            <!-- Vector DB -->
+            <g class="node accent" onclick="highlightArch('vdb')">
+              <rect x="550" y="335" width="180" height="55" />
+              <text x="640" y="357" dominant-baseline="middle" text-anchor="middle" class="title" style="fill: var(--secondary); font-size: 13px">Vector Database</text>
+              <text x="640" y="375" dominant-baseline="middle" text-anchor="middle" class="subtitle">Embedding & Tri thức AI</text>
+            </g>
+          </svg>
+        </div>
+
+        <div id="arch-details" class="arch-details-panel">
+          <h5>💡 Hướng dẫn</h5>
+          <p>Click vào các khối chức năng ở sơ đồ trên để xem thông tin chi tiết về cơ chế hoạt động, luồng kết nối và vai trò của từng thành phần trong tổng thể hệ thống LMS AI.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Lộ trình -->
+    <section id="loi-trinh">
+      <div class="section-header">
+        <span class="section-badge purple">Tiến độ</span>
+        <h2 class="section-title">Lộ Trình Triển Khai Chi Tiết</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem; gap:1.5rem; flex-wrap:wrap;">
+          <p class="section-desc" style="margin-top:0; max-width: 700px;">Quá trình phát triển được chia làm 3 giai đoạn chính. Bạn có thể bật chế độ Xem Chi Tiết để phân rã các Sprints cụ thể và danh sách API mẫu tương ứng.</p>
+          <div class="pm-switch" style="margin-top:0;">
+            <button id="btn-view-summary" class="pm-switch-btn active" onclick="setViewMode('summary')">Xem Tóm Tắt</button>
+            <button id="btn-view-detail" class="pm-switch-btn" onclick="setViewMode('detail')">Xem Chi Tiết Sprints & API</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <!-- Phase 1 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-phase">Giai đoạn 1</span>
+              <span class="timeline-badge">Nền tảng & Hạ tầng</span>
+            </div>
+            <h4 class="timeline-title">Xây Dựng LMS Core & Khung Kiến Trúc</h4>
+            <div class="timeline-grid">
+              <div>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.75rem;"><strong>Mục tiêu:</strong> Thiết lập toàn bộ hạ tầng cơ bản, các kết nối mạng dữ liệu lõi và giao diện lớp học truyền thống.</p>
+                <ul class="timeline-list">
+                  <li>Triển khai API Gateway làm điều hướng, Auth Service quản lý phiên và cấu hình song song Relational DB / NoSQL.</li>
+                  <li>Phát triển Web/App Client cơ bản để thực hiện các nghiệp vụ học tập thường nhật.</li>
+                  <li><strong>Quản lý Dự án:</strong> Thiết lập DB Schema cho Projects, Sprints, Backlogs, Tasks và mối quan hệ Sinh viên / Giảng viên.</li>
+                </ul>
+              </div>
+              <div>
+                <ul class="timeline-list">
+                  <li>Xây dựng và hoàn thiện module đào tạo: Quản lý hệ đào tạo, Môn học, Nghiệp vụ Lớp học (Điểm danh, Thời khóa biểu, Chia nhóm).</li>
+                  <li>Tích hợp cổng dịch vụ 1 cửa và thiết lập hệ thống thông báo tự động (email/in-app).</li>
+                </ul>
+              </div>
+            </div>
+            <!-- Stage 1 Sprint Detail -->
+            <div class="timeline-detail-sprints" style="display:none; margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1.25rem;">
+              <h5 style="color:var(--primary); font-size:0.95rem; margin-bottom:0.75rem; font-weight:600; display:flex; align-items:center; gap:0.35rem;"><span>📋</span> Chi tiết các Sprints (Tuần 1 - Tuần 6)</h5>
+              <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem; color:#cbd5e1; margin-bottom:1.25rem; line-height:1.5;">
+                <div><strong>Sprint 1.1 (Tuần 1-2):</strong> Cấu hình môi trường Dockerized (MySQL, Redis, NestJS base, FastAPI base), thiết lập pipeline CI/CD cơ bản, hoàn thành đặc tả DB migration khởi tạo và API xác thực (JWT + Refresh Token).</div>
+                <div><strong>Sprint 1.2 (Tuần 3-4):</strong> Thiết lập Gateway điều hướng. Hoàn thiện API và giao diện quản lý nghiệp vụ lớp học lõi: Thời khóa biểu, cấu hình môn học, điểm danh, đơn xin nghỉ phép, và phân nhóm lớp.</div>
+                <div><strong>Sprint 1.3 (Tuần 5-6):</strong> Thiết kế Database Schema chi tiết cho Quản lý dự án. Phát triển module PM trong LMS Core phục vụ CRUD bảng dự án nhóm và định nghĩa luồng phân vai (roles).</div>
+              </div>
+              <h5 style="color:var(--primary); font-size:0.95rem; margin-bottom:0.5rem; font-weight:600; display:flex; align-items:center; gap:0.35rem;"><span>🔗</span> Các API Endpoints liên quan</h5>
+              <pre style="background:rgba(0,0,0,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; color:var(--primary); overflow-x:auto; border:1px solid var(--border-color); line-height:1.4;">
+POST /api/v1/auth/login         - Xác thực người dùng & Trả về Token
+GET  /api/v1/classes/{id}/logs   - Lấy lịch sử điểm danh theo lớp
+POST /api/v1/projects           - Tạo đề tài dự án (đồ án nhóm) mới
+POST /api/v1/tasks              - Tạo task công việc thuộc bảng Kanban</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-phase">Giai đoạn 2</span>
+              <span class="timeline-badge">Tự động hoá CSSV</span>
+            </div>
+            <h4 class="timeline-title">Tự Động Hóa Quy Trình Chăm Sóc Sinh Viên</h4>
+            <div class="timeline-grid">
+              <div>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.75rem;"><strong>Mục tiêu:</strong> Giải phóng sức lao động thủ công của Phòng CTSV và Giảng viên thông qua quy trình quét tự động.</p>
+                <ul class="timeline-list">
+                  <li><strong>CSSV theo ngày & phân loại:</strong> Quét dữ liệu điểm danh hàng ngày và phân loại 4 nhóm A, B, C, D khi kết thúc môn học dựa trên R-point và kết quả môn học.</li>
+                  <li><strong>Quản lý Dự án:</strong> Triển khai giao diện bảng Kanban/Scrum độc lập: Bảng Sinh viên (quản lý đồ án nhóm) và Bảng Giảng viên (quản lý công việc hàng ngày).</li>
+                </ul>
+              </div>
+              <div>
+                <ul class="timeline-list">
+                  <li><strong>Tự động bàn giao:</strong> Chuyển giao danh sách tự động qua Lark/Base cho CTSV và Giảng viên theo kịch bản tương tác chuẩn.</li>
+                </ul>
+              </div>
+            </div>
+            <!-- Stage 2 Sprint Detail -->
+            <div class="timeline-detail-sprints" style="display:none; margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1.25rem;">
+              <h5 style="color:var(--secondary); font-size:0.95rem; margin-bottom:0.75rem; font-weight:600; display:flex; align-items:center; gap:0.35rem;"><span>📋</span> Chi tiết các Sprints (Tuần 7 - Tuần 12)</h5>
+              <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem; color:#cbd5e1; margin-bottom:1.25rem; line-height:1.5;">
+                <div><strong>Sprint 2.1 (Tuần 7-8):</strong> Triển khai frontend bảng Kanban/Scrum tương tác, kết nối API cập nhật trạng thái kéo thả thời gian thực bằng WebSockets.</div>
+                <div><strong>Sprint 2.2 (Tuần 9-10):</strong> Viết background worker (Cron) tự động tính toán điểm chuyên cần, chuyên mục ý thức R-point. Xây dựng dịch vụ phân loại tự động 4 nhóm A, B, C, D dựa trên R-point và điểm môn học.</div>
+                <div><strong>Sprint 2.3 (Tuần 11-12):</strong> Tích hợp cổng Lark/Base API: Viết webhook tự động khởi tạo group hỗ trợ lớp học và gửi báo cáo bàn giao danh sách nhóm học sinh cho giảng viên & CTSV phụ trách.</div>
+              </div>
+              <h5 style="color:var(--secondary); font-size:0.95rem; margin-bottom:0.5rem; font-weight:600; display:flex; align-items:center; gap:0.35rem;"><span>🔗</span> Các API Endpoints liên quan</h5>
+              <pre style="background:rgba(0,0,0,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; color:var(--secondary); overflow-x:auto; border:1px solid var(--border-color); line-height:1.4;">
+PUT  /api/v1/tasks/{id}/status   - Cập nhật trạng thái Kanban (Drag-Drop)
+POST /api/v1/cssv/process-daily - Kích hoạt quét điểm danh và gửi thông báo nghỉ
+POST /api/v1/cssv/classify      - Phân nhóm A, B, C, D khi kết thúc môn học</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-phase">Giai đoạn 3</span>
+              <span class="timeline-badge">AI & LLM Services</span>
+            </div>
+            <h4 class="timeline-title">Tích Hợp Trí Tuệ Nhân Tạo & Mô Hình Ngôn Ngữ Lớn</h4>
+            <div class="timeline-grid">
+              <div>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.75rem;"><strong>Mục tiêu:</strong> Nâng cấp hệ thống thông minh, cá nhân hóa hỗ trợ học tập và đưa ra các dự báo học thuật dài hạn.</p>
+                <ul class="timeline-list">
+                  <li>Thiết lập AI Microservices chạy GPU kết nối Vector DB và các LLM API bên ngoài.</li>
+                  <li>Tích hợp thử nghiệm công nghệ RAG và local LLM để phân tích chỉ số học tập theo từng buổi.</li>
+                  <li><strong>Quản lý Dự án AI:</strong> Tích hợp `AI Project Agent` tự động phân rã đầu bài dự án thành các thẻ công việc (Backlog) gợi ý; quét tiến độ trễ hạn để đưa vào cảnh báo rủi ro tiến độ dự án thời gian thực.</li>
+                </ul>
+              </div>
+              <div>
+                <ul class="timeline-list">
+                  <li>Tích hợp AI Assistant: sinh kịch bản tư vấn nhanh cho CTSV, soạn nội dung nhắc nhở và tự động gợi ý bài tập phụ đạo riêng cho học sinh yếu.</li>
+                  <li>Triển khai AI tự động chấm bài (BTVN/Project) cùng Module dự báo học vụ (fail môn, bảo lưu, chuẩn đạt đầu ra PLO/CLO).</li>
+                </ul>
+              </div>
+            </div>
+            <!-- Stage 3 Sprint Detail -->
+            <div class="timeline-detail-sprints" style="display:none; margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1.25rem;">
+              <h5 style="color:var(--success); font-size:0.95rem; margin-bottom:0.75rem; font-weight:600; display:flex; align-items:center; gap:0.35rem;"><span>📋</span> Chi tiết các Sprints (Tuần 13 - Tuần 18)</h5>
+              <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem; color:#cbd5e1; margin-bottom:1.25rem; line-height:1.5;">
+                <div><strong>Sprint 3.1 (Tuần 13-14):</strong> Xây dựng server FastAPI AI Services, tích hợp Vector DB (Qdrant) chạy embed tài liệu học tập, viết module RAG hỏi đáp.</div>
+                <div><strong>Sprint 3.2 (Tuần 15-16):</strong> Tích hợp AI Project Agent (phân rã đề tài thành subtasks qua LLM) và module AI chấm bài (BTVN & Projects) dựa trên bare-metal API prompt.</div>
+                <div><strong>Sprint 3.3 (Tuần 17-18):</strong> Hoàn thiện engine tính điểm rủi ro học vụ (Risk Score) theo thời gian thực (tích hợp số ngày trễ task dự án) và cơ chế Dynamic Re-Grouping. Phát triển dashboard quản trị dự báo rủi ro học kỳ.</div>
+              </div>
+              <h5 style="color:var(--success); font-size:0.95rem; margin-bottom:0.5rem; font-weight:600; display:flex; align-items:center; gap:0.35rem;"><span>🔗</span> Các API Endpoints liên quan</h5>
+              <pre style="background:rgba(0,0,0,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; color:var(--success); overflow-x:auto; border:1px solid var(--border-color); line-height:1.4;">
+POST /api/v1/ai/project-breakdown - Gọi AI phân rã đầu việc đề tài
+POST /api/v1/ai/grade             - Thực hiện chấm điểm gợi ý & sinh nhận xét BTVN
+GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ thời gian thực</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Cây chức năng -->
+    <section id="chuc-nang">
+      <div class="section-header">
+        <span class="section-badge">Tính năng</span>
+        <h2 class="section-title">Cơ Cấu Cây Chức Năng Chi Tiết</h2>
+        <p class="section-desc">Bản đồ chức năng phân bố giữa Tầng giao diện, Nghiệp vụ LMS Core và AI Services.</p>
+      </div>
+
+      <div class="function-grid">
+        <!-- Tầng Giao diện & Gateway -->
+        <div class="function-column">
+          <div class="function-category">
+            <div class="category-title">🌐 Tầng Giao diện & Gateway</div>
+            <ul class="function-list">
+              <li class="function-item" onclick="showFunction('Đăng nhập hệ thống', 'Cho phép người dùng Đăng nhập, bảo mật và lưu giữ phiên thông qua Auth Service.')"><span>Đăng nhập</span> <span>🔑</span></li>
+              <li class="function-item" onclick="showFunction('Học khóa học', 'Giao diện xem bài học, xem video, tương tác các học liệu và tiến độ cá nhân.')"><span>Học khóa học</span> <span>📖</span></li>
+              <li class="function-item" onclick="showFunction('Tương tác AI Assistant', 'Giao diện Chatbot thông minh hỗ trợ trả lời thắc mắc học tập 24/7.')"><span>Tương tác AI Assistant</span> <span>💬</span></li>
+              <li class="function-item" onclick="showFunction('Giao diện Quản lý dự án', 'Bảng Kanban/Scrum tách biệt giữa Sinh viên (nhóm làm đồ án) và Giảng viên (quản lý công tác giảng dạy cá nhân hàng ngày).')"><span>Bảng Dự án</span> <span>📊</span></li>
+              <li class="function-item" onclick="showFunction('API Gateway', 'Định tuyến request, xác thực, phân quyền, ghi log nghiệp vụ và chuẩn hóa dữ liệu.')"><span>API Gateway (Gateway)</span> <span>🛡️</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- LMS Core -->
+        <div class="function-column">
+          <div class="function-category">
+            <div class="category-title">🏛️ LMS Core (Modular Monolith)</div>
+            <ul class="function-list">
+              <li class="function-item" onclick="showFunction('Hệ đào tạo', 'Quản lý thông tin hệ chuyên ngành đào tạo, niên khóa và các kỳ học.')"><span>Hệ đào tạo & Kỳ học</span> <span>🏫</span></li>
+              <li class="function-item" onclick="showFunction('Lớp học & Nghiệp vụ', 'Học phần cụ thể, Điểm danh, Thời khóa biểu, quản lý nhóm và đơn xin nghỉ phép.')"><span>Nghiệp vụ Lớp học</span> <span>📅</span></li>
+              <li class="function-item" onclick="showFunction('Module Quản lý Dự án (PM)', 'Quản lý logic lưu trữ cấu trúc bảng công việc, sprint, backlog, danh sách phân công công việc của sinh viên và giảng viên.')"><span>Module Quản lý Dự án (PM)</span> <span>🛠️</span></li>
+              <li class="function-item" onclick="showFunction('Khảo thí', 'Thực hiện chấm điểm, thống kê điểm thi và đồng bộ kết quả sang module khảo thí chuyên biệt.')"><span>Khảo thí & Điểm</span> <span>📊</span></li>
+              <li class="function-item" onclick="showFunction('E-learning', 'Quản lý kho tài nguyên học tập số hóa, cho phép tải lên học liệu sau buổi.')"><span>E-learning (Tài liệu)</span> <span>💾</span></li>
+              <li class="function-item" onclick="showFunction('Thông báo tự động', 'Tự động gửi thông tin điểm danh, lịch học, nhắc nhở kỷ luật học tập.')"><span>Thông báo tự động</span> <span>🔔</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- AI Services -->
+        <div class="function-column">
+          <div class="function-category" style="border-color: rgba(192,132,252,0.3)">
+            <div class="category-title" style="color: var(--secondary)">🤖 AI Services (Microservices)</div>
+            <ul class="function-list">
+              <li class="function-item" onclick="showFunction('AI Project Agent', 'Tự động phân tích tên đề tài/mô tả để phân rã thành các task chi tiết cho sinh viên. Đồng thời quét tiến độ, phát hiện trễ hạn để đưa vào thuật toán phân tích rủi ro.')"><span>AI Project Agent (PM)</span> <span>🪄</span></li>
+              <li class="function-item" onclick="showFunction('AI chấm BTVN / Project', 'Đọc bài nộp, đối chiếu đáp án mẫu bằng LLM để đưa ra nhận xét chi tiết và chấm điểm gợi ý.')"><span>AI chấm bài tự động</span> <span>✍️</span></li>
+              <li class="function-item" onclick="showFunction('AI Risk Score realtime', 'Tự động phân tích xu hướng nghỉ học tăng, tụt điểm nhanh, *và trễ hạn task dự án* để cảnh báo rủi ro học tập theo thời gian thực.')"><span>Risk Score thời gian thực</span> <span>🚨</span></li>
+              <li class="function-item" onclick="showFunction('Dynamic Re-Grouping', 'Tự động cập nhật nguy cơ rủi ro và điều hướng chuyển đổi nhóm học viên linh hoạt.')"><span>Dynamic Re-Grouping</span> <span>🔄</span></li>
+              <li class="function-item" onclick="showFunction('AI Assistant', 'Tóm tắt lịch sử hành vi học viên, sinh kịch bản tư vấn cho CTSV và gợi ý bài tập phụ đạo cá nhân.')"><span>Trợ lý ảo & Kịch bản</span> <span>🧠</span></li>
+              <li class="function-item" onclick="showFunction('AI báo cáo & dự đoán', 'Dashboard quản trị dự đoán nguy cơ fail môn, bảo lưu học tập và chuẩn đạt đầu ra PLO/CLO.')"><span>Dashboard Dự đoán</span> <span>📈</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="function-details" class="card" style="margin-top: 1.5rem; display: none;">
+        <h5 id="func-detail-title" style="font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;"></h5>
+        <p id="func-detail-desc" style="color: #cbd5e1; font-size: 0.95rem;"></p>
+      </div>
+    </section>
+
+    <!-- SECTION 5: CSSV & Phân loại -->
+    <section id="cssv">
+      <div class="section-header">
+        <span class="section-badge success">Chăm sóc</span>
+        <h2 class="section-title">Quy Trình Phân Nhóm Cố Vấn Học Tập</h2>
+        <p class="section-desc">Mô hình hoạt động của Phòng CTSV và Giảng viên trong việc theo dõi, phân loại và xử lý tình huống theo nhóm.</p>
+      </div>
+
+      <div class="card">
+        <div class="cssv-flow">
+          <!-- Flowchart steps -->
+          <div class="flowchart-vertical">
+            <div class="flowchart-step">
+              <div class="step-number">1</div>
+              <div class="step-text">
+                <h6>Kết thúc buổi học / Hết môn</h6>
+                <p>CTSV quét điểm danh hàng ngày (CSSV theo ngày) để lọc nghỉ học không phép.</p>
+              </div>
+            </div>
+            <div class="flowchart-step">
+              <div class="step-number">2</div>
+              <div class="step-text">
+                <h6>Tính R-point & Điểm môn học</h6>
+                <p>Tổng hợp chỉ số ý thức kỷ luật R-point kết hợp với kết quả điểm môn trước.</p>
+              </div>
+            </div>
+            <div class="flowchart-step">
+              <div class="step-number">3</div>
+              <div class="step-text">
+                <h6>Phân loại 4 nhóm A, B, C, D</h6>
+                <p>Đưa học viên vào các phân nhóm học tập tương ứng khi kết thúc môn.</p>
+              </div>
+            </div>
+            <div class="flowchart-step">
+              <div class="step-number">4</div>
+              <div class="step-text">
+                <h6>Bàn giao & Tạo Group Lark/Base</h6>
+                <p>Tự động tạo group tương tác qua Lark/Base và phân kịch bản xử lý tự động.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Group selector and scripts -->
+          <div>
+            <h4 style="font-size: 1.1rem; margin-bottom: 1.25rem;">Click vào từng nhóm học tập bên dưới để xem kịch bản xử lý:</h4>
+            <div class="group-selector-grid">
+              <div class="group-card active" style="--accent-color: var(--success); --accent-glow: rgba(52, 211, 153, 0.15);" onclick="selectGroup('A', this)">
+                <div class="group-header">
+                  <span class="group-name" style="color: var(--success)">Nhóm A</span>
+                  <span class="group-badge">Ý thức Tốt - Học lực Khá/Giỏi</span>
+                </div>
+                <p class="group-rule">Học tập tốt, kỷ luật gương mẫu</p>
+              </div>
+
+              <div class="group-card" style="--accent-color: var(--warning); --accent-glow: rgba(251, 191, 36, 0.15);" onclick="selectGroup('B', this)">
+                <div class="group-header">
+                  <span class="group-name" style="color: var(--warning)">Nhóm B</span>
+                  <span class="group-badge">Ý thức Kém - Học lực Khá/Giỏi</span>
+                </div>
+                <p class="group-rule">Kết quả tốt nhưng vi phạm kỷ luật</p>
+              </div>
+
+              <div class="group-card" style="--accent-color: var(--primary); --accent-glow: rgba(56, 189, 248, 0.15);" onclick="selectGroup('C', this)">
+                <div class="group-header">
+                  <span class="group-name" style="color: var(--primary)">Nhóm C</span>
+                  <span class="group-badge">Ý thức Tốt - Học lực TB/Yếu</span>
+                </div>
+                <p class="group-rule">Chăm chỉ học tập nhưng kết quả còn thấp</p>
+              </div>
+
+              <div class="group-card" style="--accent-color: var(--danger); --accent-glow: rgba(248, 113, 113, 0.15);" onclick="selectGroup('D', this)">
+                <div class="group-header">
+                  <span class="group-name" style="color: var(--danger)">Nhóm D</span>
+                  <span class="group-badge">Ý thức Kém - Học lực TB/Yếu</span>
+                </div>
+                <p class="group-rule">Kỷ luật kém và kết quả học tập yếu</p>
+              </div>
+            </div>
+
+            <!-- Group details content -->
+            <div id="group-details" class="group-detail-panel">
+              <h5 id="group-detail-title" style="color: var(--success);">Nhóm A: Khen thưởng & Thúc đẩy phát triển</h5>
+              <p style="margin-top: 0.5rem; font-size: 0.9rem;"><strong>Đơn vị phụ trách:</strong> Giảng viên phụ trách lớp học</p>
+              <p style="margin-top: 0.75rem; color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;" id="group-detail-script">
+                <strong>Kịch bản xử lý:</strong> Hệ thống tự động khởi tạo nhóm hỗ trợ qua Lark/Base theo kịch bản khen thưởng. Giảng viên gửi thư khen ngợi, tuyên dương hoặc đề xuất làm trợ giảng, trưởng nhóm học tập nhằm thúc đẩy duy trì phong độ và phát triển kỹ năng lãnh đạo.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: AI Pipeline -->
+    <section id="ai-pipeline">
+      <div class="section-header">
+        <span class="section-badge">Luồng AI</span>
+        <h2 class="section-title">AI Services Data Pipeline</h2>
+        <p class="section-desc">Luồng dữ liệu khép kín từ khâu thu thập cho tới khi tạo ra các kịch bản tư vấn thông minh thông qua RAG và LLM.</p>
+      </div>
+
+      <div class="card">
+        <div class="pipeline-container">
+          <div class="pipeline-flow">
+            <div class="pipe-node glow">
+              <h6>Dữ liệu đầu vào</h6>
+              <p>LMS, Tasks, Điểm, Điểm danh</p>
+            </div>
+            <div class="pipe-connector"></div>
+            <div class="pipe-node">
+              <h6>AI Data Pipeline</h6>
+              <p>Chuẩn hoá & Tính toán</p>
+            </div>
+            <div class="pipe-connector"></div>
+            <div class="pipe-node">
+              <h6>Embedding & Index</h6>
+              <p>Chuyển đổi Vector</p>
+            </div>
+            <div class="pipe-connector"></div>
+            <div class="pipe-node glow" style="border-color: var(--secondary); box-shadow: 0 0 10px var(--secondary-glow)">
+              <h6>Vector Database</h6>
+              <p>Lưu trữ tri thức RAG</p>
+            </div>
+            <div class="pipe-connector"></div>
+            <div class="pipe-node">
+              <h6>LLM & RAG Engine</h6>
+              <p>Suy luận theo ngữ cảnh</p>
+            </div>
+            <div class="pipe-connector"></div>
+            <div class="pipe-node glow" style="border-color: var(--success); box-shadow: 0 0 10px rgba(52, 211, 153, 0.15)">
+              <h6>Tính năng đầu ra</h6>
+              <p>Chấm bài, PM Agent, Báo cáo</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: Dự án (Jira Style) -->
+    <section id="quan-ly-du-an">
+      <div class="section-header">
+        <span class="section-badge purple">Demo Tương Tác</span>
+        <h2 class="section-title">Phân Hệ Quản Lý Dự Án</h2>
+        <p class="section-desc">Mô phỏng bảng quản lý dự án độc lập cho Sinh viên (Đồ án nhóm) và Giảng viên (Công việc hàng ngày) tích hợp trợ lý AI.</p>
+      </div>
+
+      <div class="card">
+        <div class="pm-toggle-container">
+          <h4 id="pm-board-title" style="font-size: 1.2rem; font-weight: 600;">📋 Bảng Dự Án Nhóm (Sinh Viên)</h4>
+          <div class="pm-switch">
+            <button id="btn-student-board" class="pm-switch-btn active" onclick="toggleBoard('student')">Bảng Sinh Viên</button>
+            <button id="btn-teacher-board" class="pm-switch-btn" onclick="toggleBoard('teacher')">Bảng Giảng Viên</button>
+          </div>
+        </div>
+
+        <div class="pm-board-layout">
+          <!-- Left side: Kanban board -->
+          <div class="kanban-board" id="board-container">
+            <!-- Student Board Content (Default) -->
+            <!-- Col 1: To Do -->
+            <div class="kanban-col" id="col-todo">
+              <div class="kanban-col-header">Cần làm <span style="font-size: 0.8rem; opacity: 0.5;">(2)</span></div>
+              <div class="kanban-card">
+                <div class="kanban-card-title">Thiết kế Database Schema cho hệ thống đăng ký</div>
+                <div class="kanban-card-meta">
+                  <span class="kanban-card-user"><span class="user-avatar" style="background:#38bdf8;"></span>Tuấn Anh</span>
+                  <span style="color:var(--danger)">High</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div class="kanban-card-title">Làm UI Form đăng ký môn học</div>
+                <div class="kanban-card-meta">
+                  <span class="kanban-card-user"><span class="user-avatar" style="background:#a855f7;"></span>Minh Đức</span>
+                  <span>Medium</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 2: In Progress -->
+            <div class="kanban-col" id="col-progress">
+              <div class="kanban-col-header">Đang làm <span style="font-size: 0.8rem; opacity: 0.5;">(1)</span></div>
+              <div class="kanban-card warning">
+                <div class="kanban-card-title">⚠️ Code API backend xử lý đồng thời (Concurrency)</div>
+                <div style="font-size: 0.75rem; color: var(--danger); margin-top: -0.25rem;">Trễ hạn 3 ngày</div>
+                <div class="kanban-card-meta">
+                  <span class="kanban-card-user"><span class="user-avatar" style="background:#34d399;"></span>Nguyễn Văn A</span>
+                  <span style="color:var(--danger)">Critical</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 3: Done -->
+            <div class="kanban-col" id="col-done">
+              <div class="kanban-col-header">Hoàn thành <span style="font-size: 0.8rem; opacity: 0.5;">(1)</span></div>
+              <div class="kanban-card">
+                <div class="kanban-card-title" style="text-decoration: line-through; opacity: 0.5;">Lập tài liệu đặc tả dự án LMS AI</div>
+                <div class="kanban-card-meta">
+                  <span class="kanban-card-user"><span class="user-avatar" style="background:#fbbf24;"></span>Hoàng Nam</span>
+                  <span style="color:var(--success)">Done</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right side: AI Co-pilot Panel -->
+          <div class="ai-pm-panel">
+            <div class="ai-pm-header">
+              <span>🪄</span>
+              <span>AI PM Agent Copilot</span>
+            </div>
+            
+            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+              Trợ lý AI hỗ trợ tự động phân rã đề tài thành các task cụ thể và liên tục theo dõi rủi ro tiến độ.
+            </p>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+              <span class="subtitle" style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary); font-weight:700; display:block; margin-bottom: 0.5rem;">Đề tài đang chọn</span>
+              <h5 id="ai-active-project" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem;">Xây dựng chức năng Đăng ký môn học</h5>
+              <button class="ai-pm-btn" id="btn-ai-gen" onclick="triggerAIGenerator()">🪄 AI Phân Rã Công Việc</button>
+            </div>
+
+            <div class="ai-pm-output" id="ai-output-area">
+              <p style="color: var(--text-muted); font-style: italic; text-align: center; margin-top: 2rem;">Chưa có dữ liệu. Hãy bấm nút Phân rã ở trên.</p>
+            </div>
+
+            <div class="ai-warning-box" id="ai-warning-container">
+              <div class="ai-warning-icon">🚨</div>
+              <div class="ai-warning-text">
+                <h7>AI Cảnh Báo Rủi Ro Tiến Độ</h7>
+                <p id="ai-warning-msg">Sinh viên <strong>Nguyễn Văn A</strong> trễ task API quá 3 ngày. AI tự động cộng <strong>+15% Risk Score</strong> học vụ và đề xuất Giảng viên nhắc nhở.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+  </main>
+
+  <script>
+    // Highlight architecture connections
+    const connections = {
+      'client': ['line-client-gateway'],
+      'gateway': ['line-client-gateway', 'line-gateway-auth', 'line-gateway-core', 'line-gateway-ai'],
+      'auth': ['line-gateway-auth'],
+      'core': ['line-gateway-core', 'line-core-ai-1', 'line-core-ai-2', 'line-core-rdb', 'line-core-ext'],
+      'ai': ['line-gateway-ai', 'line-core-ai-1', 'line-core-ai-2', 'line-ai-vdb'],
+      'db': ['line-core-rdb'],
+      'ext': ['line-core-ext'],
+      'vdb': ['line-ai-vdb']
+    };
+
+    const archInfo = {
+      'client': {
+        title: '📱 Web / App Client (Giao diện)',
+        desc: 'Giao diện đa nền tảng cho phép Học viên học tập, kiểm tra, xem tiến trình; Giảng viên quản lý giảng dạy và Phòng CTSV theo dõi báo cáo. Tích hợp trực tiếp trợ lý ảo AI Assistant phục vụ tra cứu nhanh.'
+      },
+      'gateway': {
+        title: '🛡️ API Gateway (Cổng điều hướng)',
+        desc: 'Đóng vai trò chốt chặn bảo mật trung gian. Gateway có nhiệm vụ kiểm tra token phiên làm việc (phối hợp với Auth Service), kiểm tra phân quyền tài khoản, ghi log hoạt động và định tuyến các request chuẩn hoá đến đúng dịch vụ xử lý phía sau.'
+      },
+      'auth': {
+        title: '🔑 Auth Service (Xác thực)',
+        desc: 'Dịch vụ độc lập xử lý đăng ký, đăng nhập, phân quyền người dùng (Học viên/Giảng viên/CTSV) và quản lý vòng đời của token bảo mật.'
+      },
+      'core': {
+        title: '🏛️ LMS Core Monolith (Khối nghiệp vụ lõi)',
+        desc: 'Xây dựng theo kiến trúc Modular Monolith. Chứa tất cả các nghiệp vụ quản lý truyền thống như hệ đào tạo, lịch học, điểm danh, thời khóa biểu và xử lý đơn từ hành chính trực tuyến. Tích hợp thêm Module Quản Lý Dự Án lưu trữ cấu trúc bảng task.'
+      },
+      'ai': {
+        title: '🤖 AI Services Microservices (Khối dịch vụ AI)',
+        desc: 'Được triển khai tách rời hoàn toàn dưới dạng các Microservice. Chịu trách nhiệm thực thi các tính năng AI đòi hỏi tài nguyên GPU cao như: tự động chấm bài bằng LLM, tính toán chỉ số rủi ro học vụ (Risk Score) và AI Project Agent tự động sinh việc / đánh giá tiến độ.'
+      },
+      'db': {
+        title: '💾 Relational & NoSQL Database',
+        desc: 'Hệ quản trị cơ sở dữ liệu kết hợp: Relational Database lưu trữ dữ liệu nghiệp vụ có cấu trúc chặt chẽ (Thông tin sinh viên, điểm số, lịch học); NoSQL Database lưu trữ log lịch sử hoạt động và dữ liệu cấu trúc linh hoạt.'
+      },
+      'ext': {
+        title: '🔗 Hệ thống Kết nối Bên Ngoài',
+        desc: 'Các cổng giao tiếp ngoài giúp đồng bộ với Cổng dịch vụ 1 cửa hành chính, hệ thống khảo thí chuyên biệt, và các group hỗ trợ chat tự động qua Lark/Base.'
+      },
+      'vdb': {
+        title: '🗂️ Vector Database (Cơ sở dữ liệu Vector)',
+        desc: 'Lưu trữ các đoạn tài liệu học tập, nội quy và dữ liệu tri thức đã được số hóa dưới dạng vector (embeddings). Phục vụ cơ chế tìm kiếm ngữ cảnh nhanh của RAG trước khi gửi yêu cầu xử lý tới mô hình LLM.'
+      }
+    };
+
+    function highlightArch(nodeId) {
+      const svg = document.getElementById('svg-arch');
+      const detailsPanel = document.getElementById('arch-details');
+      
+      // Toggle highlight mode class on SVG
+      svg.classList.add('highlight-mode');
+
+      // Clear previous highlights
+      svg.querySelectorAll('line, path').forEach(el => {
+        el.classList.remove('highlight-line', 'highlight-line-secondary', 'highlight-marker', 'highlight-marker-secondary');
+      });
+
+      // Highlight target paths
+      const pathsToHighlight = connections[nodeId] || [];
+      pathsToHighlight.forEach(pathId => {
+        const pathEl = document.getElementById(pathId);
+        if (pathEl) {
+          const isSecondary = nodeId === 'ai' || nodeId === 'vdb' || nodeId === 'auth';
+          pathEl.classList.add(isSecondary ? 'highlight-line-secondary' : 'highlight-line');
+          pathEl.classList.add(isSecondary ? 'highlight-marker-secondary' : 'highlight-marker');
+        }
+      });
+
+      // Show details
+      const info = archInfo[nodeId];
+      detailsPanel.innerHTML = `
+        <h5 style="color: ${nodeId === 'ai' || nodeId === 'vdb' || nodeId === 'auth' ? 'var(--secondary)' : 'var(--primary)'}">${info.title}</h5>
+        <p style="color: #cbd5e1; line-height: 1.6; font-size: 0.95rem;">${info.desc}</p>
+      `;
+    }
+
+    // Function list clicking helper
+    function showFunction(title, desc) {
+      const panel = document.getElementById('function-details');
+      const titleEl = document.getElementById('func-detail-title');
+      const descEl = document.getElementById('func-detail-desc');
+      
+      titleEl.innerText = title;
+      descEl.innerText = desc;
+      panel.style.display = 'block';
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Group scripts database
+    const groupScripts = {
+      'A': {
+        title: 'Nhóm A: Khen thưởng & Thúc đẩy phát triển',
+        unit: 'Giảng viên phụ trách lớp học',
+        script: 'Hệ thống tự động khởi tạo nhóm hỗ trợ qua Lark/Base theo kịch bản khen thưởng. Giảng viên gửi thư khen ngợi, tuyên dương hoặc đề xuất làm trợ giảng, trưởng nhóm học tập nhằm thúc đẩy duy trì phong độ và phát triển kỹ năng lãnh đạo.',
+        color: 'var(--success)'
+      },
+      'B': {
+        title: 'Nhóm B: Chấn chỉnh kỷ luật & Nhắc nhở quy chế',
+        unit: 'Phòng Công tác Sinh viên (CTSV)',
+        script: 'Bàn giao danh sách tự động cho CTSV. Gửi tin nhắn cảnh báo vi phạm quy chế học tập qua SMS/Lark. CTSV hẹn gặp mặt nhắc nhở trực tiếp về thái độ, nội quy kỷ luật học tập mặc dù học lực của sinh viên vẫn ở mức khá giỏi.',
+        color: 'var(--warning)'
+      },
+      'C': {
+        title: 'Nhóm C: Cố vấn 1-1 & Hỗ trợ học tập',
+        unit: 'Giảng viên phụ trách lớp học',
+        script: 'Giảng viên lên kịch bản hỗ trợ 1-1, phân tích lỗ hổng kiến thức. Gợi ý thêm các bài tập bổ sung, tài liệu đọc phụ đạo riêng hoặc kết nối sinh viên Nhóm A kèm cặp sinh viên Nhóm C để cải thiện học lực.',
+        color: 'var(--primary)'
+      },
+      'D': {
+        title: 'Nhóm D: Can thiệp sâu & Xử lý rủi ro sớm',
+        unit: 'Phòng CTSV phối hợp cùng Giảng viên',
+        script: 'Yêu cầu can thiệp khẩn cấp. Phòng CTSV liên hệ trực tiếp với phụ huynh học sinh để thông báo tình hình. Tạo nhóm trao đổi gồm CTSV, Giảng viên và Phụ huynh để lập kế hoạch giám sát học tập đặc biệt, hạn chế rủi ro buộc thôi học/bảo lưu.',
+        color: 'var(--danger)'
+      }
+    };
+
+    function selectGroup(groupId, element) {
+      // Clear active class from all cards
+      document.querySelectorAll('.group-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      // Set active to current card
+      element.classList.add('active');
+
+      // Update details panel
+      const details = groupScripts[groupId];
+      const titleEl = document.getElementById('group-detail-title');
+      const scriptEl = document.getElementById('group-detail-script');
+      
+      titleEl.innerText = details.title;
+      titleEl.style.color = details.color;
+      
+      scriptEl.innerHTML = `<strong>Đơn vị phụ trách:</strong> ${details.unit}.<br/><br/><strong>Kịch bản xử lý:</strong> ${details.script}`;
+    }
+
+    // Scroll spy for Table of Contents
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.toc-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 120)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    function setActiveLink(linkElement) {
+      navLinks.forEach(link => link.classList.remove('active'));
+      linkElement.classList.add('active');
+    }
+
+    // View mode toggle for timeline (Summary / Detail)
+    function setViewMode(mode) {
+      const isDetail = mode === 'detail';
+      
+      // Toggle active class on buttons
+      document.getElementById('btn-view-summary').classList.toggle('active', !isDetail);
+      document.getElementById('btn-view-detail').classList.toggle('active', isDetail);
+
+      // Show or hide detail blocks
+      document.querySelectorAll('.timeline-detail-sprints').forEach(el => {
+        el.style.display = isDetail ? 'block' : 'none';
+      });
+    }
+
+
+
+    // ========================================================
+    // JIRA INTERACTIVE BOARD SCRIPT
+    // ========================================================
+    let currentBoard = 'student';
+
+    const boardsData = {
+      'student': {
+        title: '📋 Bảng Dự Án Nhóm (Sinh Viên)',
+        project: 'Xây dựng chức năng Đăng ký môn học',
+        btnText: '🪄 AI Phân Rã Công Việc',
+        warning: 'Sinh viên <strong>Nguyễn Văn A</strong> trễ task API quá 3 ngày. AI tự động cộng <strong>+15% Risk Score</strong> học vụ và đề xuất Giảng viên nhắc nhở.',
+        columns: {
+          'todo': `
+            <div class="kanban-col-header">Cần làm <span style="font-size: 0.8rem; opacity: 0.5;">(2)</span></div>
+            <div class="kanban-card">
+              <div class="kanban-card-title">Thiết kế Database Schema cho hệ thống đăng ký</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#38bdf8;"></span>Tuấn Anh</span>
+                <span style="color:var(--danger)">High</span>
+              </div>
+            </div>
+            <div class="kanban-card">
+              <div class="kanban-card-title">Làm UI Form đăng ký môn học</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#a855f7;"></span>Minh Đức</span>
+                <span>Medium</span>
+              </div>
+            </div>
+          `,
+          'progress': `
+            <div class="kanban-col-header">Đang làm <span style="font-size: 0.8rem; opacity: 0.5;">(1)</span></div>
+            <div class="kanban-card warning">
+              <div class="kanban-card-title">⚠️ Code API backend xử lý đồng thời (Concurrency)</div>
+              <div style="font-size: 0.75rem; color: var(--danger); margin-top: -0.25rem;">Trễ hạn 3 ngày</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#34d399;"></span>Nguyễn Văn A</span>
+                <span style="color:var(--danger)">Critical</span>
+              </div>
+            </div>
+          `,
+          'done': `
+            <div class="kanban-col-header">Hoàn thành <span style="font-size: 0.8rem; opacity: 0.5;">(1)</span></div>
+            <div class="kanban-card">
+              <div class="kanban-card-title" style="text-decoration: line-through; opacity: 0.5;">Lập tài liệu đặc tả dự án LMS AI</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#fbbf24;"></span>Hoàng Nam</span>
+                <span style="color:var(--success)">Done</span>
+              </div>
+            </div>
+          `
+        }
+      },
+      'teacher': {
+        title: '💼 Bảng Công Việc Hàng Ngày (Giảng Viên)',
+        project: 'Quản lý tác vụ giảng dạy - Học kỳ I',
+        btnText: '🪄 AI Gợi ý Lịch Trình',
+        warning: 'Phòng CTSV phát hiện <strong>Nhóm D</strong> lớp Web203 có nguy cơ rớt môn cao. Đề xuất giảng viên xếp lịch phụ đạo sớm.',
+        columns: {
+          'todo': `
+            <div class="kanban-col-header">Cần làm <span style="font-size: 0.8rem; opacity: 0.5;">(2)</span></div>
+            <div class="kanban-card">
+              <div class="kanban-card-title">Soạn đề thi giữa kỳ môn Web nâng cao</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#e2e8f0;"></span>Tôi</span>
+                <span style="color:var(--danger)">High</span>
+              </div>
+            </div>
+            <div class="kanban-card">
+              <div class="kanban-card-title">Lên tài liệu giáo trình RAG & VectorDB</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#e2e8f0;"></span>Tôi</span>
+                <span>Medium</span>
+              </div>
+            </div>
+          `,
+          'progress': `
+            <div class="kanban-col-header">Đang làm <span style="font-size: 0.8rem; opacity: 0.5;">(1)</span></div>
+            <div class="kanban-card">
+              <div class="kanban-card-title">Duyệt đề tài đồ án môn học Nhóm 4</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#e2e8f0;"></span>Tôi</span>
+                <span style="color:var(--primary)">Normal</span>
+              </div>
+            </div>
+          `,
+          'done': `
+            <div class="kanban-col-header">Hoàn thành <span style="font-size: 0.8rem; opacity: 0.5;">(1)</span></div>
+            <div class="kanban-card">
+              <div class="kanban-card-title" style="text-decoration: line-through; opacity: 0.5;">Nhập điểm chuyên cần tuần 4 lớp Web203</div>
+              <div class="kanban-card-meta">
+                <span class="kanban-card-user"><span class="user-avatar" style="background:#e2e8f0;"></span>Tôi</span>
+                <span style="color:var(--success)">Done</span>
+              </div>
+            </div>
+          `
+        }
+      }
+    };
+
+    function toggleBoard(type) {
+      currentBoard = type;
+      
+      // Update UI buttons classes
+      document.getElementById('btn-student-board').classList.toggle('active', type === 'student');
+      document.getElementById('btn-teacher-board').classList.toggle('active', type === 'teacher');
+      
+      // Style secondary color on teacher board active
+      if (type === 'teacher') {
+        document.getElementById('btn-teacher-board').classList.add('secondary');
+      } else {
+        document.getElementById('btn-teacher-board').classList.remove('secondary');
+      }
+
+      // Update Texts
+      const data = boardsData[type];
+      document.getElementById('pm-board-title').innerText = data.title;
+      document.getElementById('ai-active-project').innerText = data.project;
+      document.getElementById('btn-ai-gen').innerText = data.btnText;
+      document.getElementById('ai-warning-msg').innerHTML = data.warning;
+
+      // Update Columns Content
+      document.getElementById('col-todo').innerHTML = data.columns.todo;
+      document.getElementById('col-progress').innerHTML = data.columns.progress;
+      document.getElementById('col-done').innerHTML = data.columns.done;
+
+      // Reset AI Output panel
+      document.getElementById('ai-output-area').innerHTML = `
+        <p style="color: var(--text-muted); font-style: italic; text-align: center; margin-top: 2rem;">Chưa có dữ liệu. Hãy bấm nút Phân rã ở trên.</p>
+      `;
+    }
+
+    // AI task breakdown action simulator
+    function triggerAIGenerator() {
+      const outputArea = document.getElementById('ai-output-area');
+      outputArea.innerHTML = `
+        <div style="display:flex; justify-content:center; align-items:center; flex-direction:column; gap:0.5rem; min-height:100px;">
+          <div style="width:24px; height:24px; border:3px solid var(--secondary); border-top-color:transparent; border-radius:50%; animation: spin 1s infinite linear;"></div>
+          <span style="font-size:0.8rem; color:var(--text-muted);">AI đang suy luận...</span>
+        </div>
+      `;
+
+      // CSS keyframe injector helper for spinner
+      if (!document.getElementById('spinner-style')) {
+        const style = document.createElement('style');
+        style.id = 'spinner-style';
+        style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
+      }
+
+      setTimeout(() => {
+        if (currentBoard === 'student') {
+          outputArea.innerHTML = `
+            <span class="subtitle" style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary); font-weight:700; display:block; margin-bottom: 0.5rem;">AI gợi ý phân rã (Breakdown)</span>
+            <ul class="ai-task-list">
+              <li class="ai-task-item done" style="animation-delay: 0.1s">
+                <span style="flex-grow:1;">[Backlog] Tìm tài liệu và viết đặc tả đăng ký môn học</span>
+                <span style="font-size:0.7rem; color:var(--success)">Xong</span>
+              </li>
+              <li class="ai-task-item progress" style="animation-delay: 0.2s">
+                <span style="flex-grow:1;">[In Progress] Xử lý concurrency khi đăng ký trùng môn</span>
+                <span style="font-size:0.7rem; color:var(--warning)">Đang làm</span>
+              </li>
+              <li class="ai-task-item" style="animation-delay: 0.3s">
+                <span style="flex-grow:1;">[To Do] Tạo UI dashboard form chọn môn học</span>
+                <span style="font-size:0.7rem; color:var(--text-muted)">Cần làm</span>
+              </li>
+              <li class="ai-task-item" style="animation-delay: 0.4s">
+                <span style="flex-grow:1;">[To Do] Viết unit test kiểm thử API đăng ký</span>
+                <span style="font-size:0.7rem; color:var(--text-muted)">Cần làm</span>
+              </li>
+            </ul>
+          `;
+        } else {
+          outputArea.innerHTML = `
+            <span class="subtitle" style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary); font-weight:700; display:block; margin-bottom: 0.5rem;">AI gợi ý lịch trình công việc</span>
+            <ul class="ai-task-list">
+              <li class="ai-task-item done" style="animation-delay: 0.1s">
+                <span style="flex-grow:1;">[Thứ 2] Nhập điểm và kiểm danh tuần 4</span>
+                <span style="font-size:0.7rem; color:var(--success)">Sáng</span>
+              </li>
+              <li class="ai-task-item progress" style="animation-delay: 0.2s">
+                <span style="flex-grow:1;">[Thứ 3] Duyệt đề tài và họp nhóm đồ án</span>
+                <span style="font-size:0.7rem; color:var(--warning)">Chiều</span>
+              </li>
+              <li class="ai-task-item" style="animation-delay: 0.3s">
+                <span style="flex-grow:1;">[Thứ 5] Soạn đề thi giữa học kỳ nâng cao</span>
+                <span style="font-size:0.7rem; color:var(--text-muted)">Cả ngày</span>
+              </li>
+              <li class="ai-task-item" style="animation-delay: 0.4s">
+                <span style="flex-grow:1;">[Thứ Sáu] Soạn bài giảng RAG & VectorDB</span>
+                <span style="font-size:0.7rem; color:var(--text-muted)">Sáng</span>
+              </li>
+            </ul>
+          `;
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
