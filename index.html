@@ -1347,6 +1347,20 @@
               <strong>✔ Giải pháp hệ thống mới:</strong> Tích hợp các <strong>AI Services (Microservices độc lập dùng GPU)</strong> song song với LMS Core. Hệ thống tự động phân tích rủi ro (Risk Score), tự động phân rã/theo dõi task dự án (AI Project Agent) và cung cấp chatbot AI Assistant hỗ trợ học tập 24/7.
             </div>
           </div>
+
+          <!-- Issue 6 -->
+          <div class="issue-card-item">
+            <div class="issue-header">
+              <span class="issue-badge">Vấn đề 6</span>
+              <span class="issue-title">Thủ tục hành chính rời rạc & Thiếu tự động hóa khảo thí</span>
+            </div>
+            <div class="issue-content">
+              Sinh viên phải liên hệ nhiều phòng ban khác nhau cho các nhu cầu hành chính, gây đùn đẩy trách nhiệm. Quy trình thi cử, khảo thí và phúc khảo bài thi còn thủ công, tốn nhân lực và chậm trễ trong việc cập nhật điểm.
+            </div>
+            <div class="solution-content">
+              <strong>✔ Giải pháp hệ thống mới:</strong> Ban hành <strong>Cổng dịch vụ 1 cửa của RE (Rika)</strong>: tự động hóa các nghiệp vụ thay thế nhân sự và định nghĩa vai trò mới (GVCN/Trợ giảng, Cố vấn phụ trách dưới tên chung Rika). Cải tiến thi cử: thi trắc nghiệm & coding tự động, AI hỗ trợ phúc khảo tự động bước 1 và đồng bộ điểm tức thời.
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1628,9 +1642,10 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
               <li class="function-item" onclick="showDetailedFunction(this, 'he-dao-tao', 'core')"><span>Hệ đào tạo & Kỳ học</span> <span>🏫</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'nghiep-vu-lop', 'core')"><span>Nghiệp vụ Lớp học</span> <span>📅</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'quan-ly-du-an', 'core')"><span>Module Quản lý Dự án (PM)</span> <span>🛠️</span></li>
-              <li class="function-item" onclick="showDetailedFunction(this, 'khao-thi', 'core')"><span>Khảo thí & Điểm</span> <span>📊</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'khao-thi', 'core')"><span>Khảo thí tự động (Cải tiến)</span> <span>📊</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'e-learning', 'core')"><span>E-learning (Tài liệu)</span> <span>💾</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'thong-bao', 'core')"><span>Thông báo tự động</span> <span>🔔</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'cong-1-cua', 'core')"><span>Cổng dịch vụ 1 cửa (Rika)</span> <span>🚪</span></li>
             </ul>
           </div>
         </div>
@@ -2065,12 +2080,14 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
         `
       },
       'khao-thi': {
-        title: '📊 Module Khảo thí & Tính GPA',
+        title: '📊 Module Khảo thí tự động & Cải tiến thi cử',
         desc: `
-          <p><strong>Mục tiêu:</strong> Quản lý điểm số toàn diện và thực hiện các tính toán học vụ phức tạp.</p>
+          <p><strong>Mục tiêu:</strong> Đánh giá lại hệ thống, số hóa quy trình thi cử và tự động hóa khâu chấm thi, phúc khảo.</p>
           <ul>
-            <li><strong>Nhập điểm:</strong> Cho phép giảng viên nhập điểm trực tiếp hoặc import từ file Excel. Khóa sổ điểm (Lock grade) sau thời hạn công bố điểm để chống sửa đổi tùy tiện.</li>
-            <li><strong>Đồng nhất mã gốc (base_subject_id):</strong> Khi tính điểm trung bình tích lũy (GPA) và xử lý học lại, engine sẽ nhóm các môn học có ID khác nhau giữa các khóa (ví dụ môn C của K24 và K25) về chung một mã môn gốc để tự động thay thế điểm cũ bằng điểm mới cao hơn.</li>
+            <li><strong>AI Sinh đề thi ngẫu nhiên:</strong> Tự động tổng hợp câu hỏi từ ngân hàng đề theo ma trận chuẩn đầu ra môn học (CLO) và chuẩn đầu ra chương trình (PLO).</li>
+            <li><strong>Chấm bài tự động:</strong> Tự động hóa chấm thi trắc nghiệm và kiểm thử mã nguồn (Auto-grading) đối với môn học Công nghệ thông tin.</li>
+            <li><strong>Phúc khảo tự động bước 1:</strong> AI hỗ trợ đối chiếu bài làm của sinh viên với đáp án mẫu và thang điểm chi tiết (rubric) để giải thích/trả lời khiếu nại bước 1 cho sinh viên, giảm 80% khối lượng phúc khảo thủ công.</li>
+            <li><strong>Đồng bộ điểm tức thời:</strong> Tự động đồng bộ kết quả thi từ hệ thống khảo thí chuyên biệt về LMS Core ngay sau khi có điểm đã được duyệt.</li>
           </ul>
         `
       },
@@ -2091,6 +2108,22 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
           <ul>
             <li><strong>Đa kênh (Omnichannel):</strong> Gửi thông báo qua App Notification (In-App), Email, và tin nhắn SMS hoặc Lark/Base Webhook đối với các thông báo khẩn cấp.</li>
             <li><strong>Trigger tự động:</strong> Kích hoạt gửi thông báo khi sinh viên bị giảng viên đánh giá vắng học không phép, khi có điểm thi mới, khi deadline task dự án còn 24 giờ, hoặc khi có cảnh báo kỷ luật.</li>
+          </ul>
+        `
+      },
+      'cong-1-cua': {
+        title: '🚪 Cổng dịch vụ 1 cửa (Mô hình Một Cửa - Rika)',
+        desc: `
+          <p><strong>Mục tiêu:</strong> Luật hóa và chuyên nghiệp hóa dịch vụ chăm sóc sinh viên. Tất cả sinh viên chỉ liên hệ làm việc qua 1 cổng duy nhất là <strong>Rika</strong>.</p>
+          <ul>
+            <li><strong>Thống nhất & Tự động hóa:</strong> Gom toàn bộ yêu cầu hành chính (nghỉ phép, học phí, điểm số, khiếu nại) vào cổng dịch vụ 1 cửa. Hệ thống tự động phân loại, giải quyết hoặc điều hướng đến nhân sự phụ trách mà sinh viên không cần biết.</li>
+            <li><strong>Đại diện chung Rika:</strong> Sinh viên không liên hệ trực tiếp với từng nhân sự hành chính của RE. Tất cả phản hồi, hỗ trợ đều đứng tên <strong>Rika</strong> (phụ trách bởi hệ thống tự động phối hợp với Cố vấn phụ trách lớp chia theo số lượng SV).</li>
+            <li><strong>Định nghĩa Vai trò mới:</strong> 
+              <ul>
+                <li><strong>Giáo viên chủ nhiệm:</strong> Khuyến khích là Trợ giảng (TAs) trực tiếp đồng hành hỗ trợ học vụ hàng ngày.</li>
+                <li><strong>Cố vấn phụ trách lớp:</strong> Quản lý số lượng SV theo phân khu, vận hành dưới tên chung Rika.</li>
+              </ul>
+            </li>
           </ul>
         `
       },
