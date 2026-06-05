@@ -1996,195 +1996,198 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
       'dang-nhap': {
         title: '🔑 Đăng nhập hệ thống & Quản lý phiên',
         desc: `
-          <p><strong>Mục tiêu:</strong> Xác thực danh tính người dùng và cấp quyền truy cập tài nguyên hệ thống tương ứng với vai trò (Sinh viên, Giảng viên, CTSV, Admin).</p>
+          <p><strong>Mục tiêu:</strong> Xác thực an toàn danh tính người dùng và cấp quyền truy cập tài nguyên chính xác theo vai trò (Sinh viên, Giảng viên, CTSV, Admin).</p>
           <ul>
-            <li><strong>Cơ chế xác thực:</strong> Sử dụng Token-based Authentication (Access Token ngắn hạn 15 phút lưu trong memory và Refresh Token dài hạn 7 ngày lưu trong HttpOnly Cookie).</li>
-            <li><strong>Tích hợp SSO:</strong> Hỗ trợ đăng nhập một chạm qua tài khoản Google/Microsoft hoặc hệ thống CAS của trường.</li>
-            <li><strong>Bảo mật:</strong> Mã hóa mật khẩu bằng bcrypt, chống brute-force bằng cách khóa tài khoản tạm thời sau 5 lần nhập sai liên tiếp và ghi log phiên hoạt động (IP, Device, Location).</li>
+            <li><strong>Tính năng chi tiết:</strong> Đăng nhập bằng tài khoản/mật khẩu, tích hợp SSO (Google/Microsoft OAuth2), tự động gia hạn token (Silent Refresh), quản lý thiết bị/phiên hoạt động của người dùng, và khóa tài khoản khi phát hiện brute-force.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Client gửi credentials qua API Gateway &rarr; Auth Service xác thực &rarr; Trả về Access Token (lưu bộ nhớ tạm Client) và Set-Cookie Refresh Token (HttpOnly, Secure, SameSite) &rarr; Lưu trạng thái phiên vào bảng <code>user_sessions</code>.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> JWT (JSON Web Token), mã hóa bcrypt, Redis lưu trữ Blacklist Refresh Token, PostgreSQL (bảng <code>users</code>, <code>user_sessions</code>).</li>
           </ul>
         `
       },
       'hoc-khoa-hoc': {
         title: '📖 Học khóa học & Theo dõi tiến độ',
         desc: `
-          <p><strong>Mục tiêu:</strong> Không gian học tập trực tuyến dành cho sinh viên, nơi hiển thị đầy đủ tài nguyên và lộ trình của từng môn học.</p>
+          <p><strong>Mục tiêu:</strong> Cung cấp không gian học tập trực tuyến cá nhân hóa, hiển thị lộ trình học và đo lường tiến độ học tập thực tế của sinh viên.</p>
           <ul>
-            <li><strong>Lộ trình học tập:</strong> Hiển thị danh sách các chương mục, bài giảng video, tài liệu đọc, slide bài giảng, bài tập trắc nghiệm và hạn nộp BTVN.</li>
-            <li><strong>Theo dõi tiến độ:</strong> Thanh tiến trình (Progress Bar) tính toán tự động dựa trên tỷ lệ hoàn thành học liệu (đã xem video > 80% thời lượng, đã hoàn thành quiz).</li>
-            <li><strong>Cá nhân hóa:</strong> Lưu lại vị trí video đang xem dở, cho phép ghi chú (bookmark) trực tiếp trên dòng thời gian của bài giảng video.</li>
+            <li><strong>Tính năng chi tiết:</strong> Xem sơ đồ lộ trình học (Learning Path), xem bài giảng, xem video, làm quiz nhanh, đánh dấu bài học hoàn thành, lưu lịch sử xem video dở dang (Resume Watching) và lưu bookmark ghi chú.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Client truy cập bài học &rarr; LMS Core trả về cấu trúc bài học &rarr; Khi học viên xem video/tài liệu, Client định kỳ gửi checkpoint (mỗi 10 giây) về LMS Core để ghi nhận tiến độ vào bảng <code>student_progress</code> &rarr; Tính toán lại phần trăm hoàn thành khóa học thời gian thực.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> RESTful API, PostgreSQL (bảng <code>student_progress</code>, <code>course_sections</code>, <code>lecture_materials</code>), CDN phân phối tài nguyên bài giảng.</li>
           </ul>
         `
       },
       'tuong-tac-ai': {
         title: '💬 Tương tác AI Assistant (Giao diện Chatbot)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Cung cấp trợ lý học tập AI túc trực 24/7 giúp giải đáp thắc mắc, tóm tắt bài giảng và hướng dẫn làm bài tập.</p>
+          <p><strong>Mục tiêu:</strong> Cung cấp trợ lý ảo hỗ trợ giải đáp học tập 24/7, tóm tắt kiến thức bài giảng và hướng dẫn giải bài tập cá nhân hóa.</p>
           <ul>
-            <li><strong>Giao diện hội thoại:</strong> Thiết kế dạng chat bong bóng hiện đại, hỗ trợ định dạng Markdown, hiển thị khối code (Code block) có highlight cú pháp và công thức toán học LaTeX.</li>
-            <li><strong>Truy vấn tri thức (RAG):</strong> Khi sinh viên hỏi về kiến thức môn học, AI tự động tìm kiếm các tài liệu liên quan trong thư viện Vector Database để trả lời chính xác, đính kèm nguồn trích dẫn từ slide bài giảng của thầy cô.</li>
-            <li><strong>Lịch sử hội thoại:</strong> Lưu trữ lịch sử các phiên chat để người dùng có thể tiếp tục cuộc hội thoại trước đó.</li>
+            <li><strong>Tính năng chi tiết:</strong> Khung chat thời gian thực hỗ trợ Markdown và công thức toán học LaTeX, tóm tắt nội dung slide bài giảng dài, dịch thuật thuật ngữ chuyên ngành, và hướng dẫn sửa lỗi code cho sinh viên CNTT.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Sinh viên nhập câu hỏi &rarr; Client gửi tới AI Service &rarr; RAG Engine tìm kiếm tài liệu học tập liên quan trong Vector Database (đã embedding từ slide giảng viên) &rarr; Kết hợp ngữ cảnh (Context) gửi Prompt đến LLM &rarr; Stream câu trả lời (SSE) về Client thời gian thực kèm nguồn trích dẫn slide.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> FastAPI, LangChain, Server-Sent Events (SSE), Vector Database (pgvector/Qdrant), Mô hình LLM (Gemini/GPT-4o).</li>
           </ul>
         `
       },
       'bang-du-an': {
         title: '📊 Bảng quản lý dự án (Kanban/Scrum Board)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Công cụ trực quan hóa quản lý công việc và đồ án nhóm dành cho cả sinh viên và giảng viên.</p>
+          <p><strong>Mục tiêu:</strong> Công cụ kéo thả đồ án nhóm trực quan giúp sinh viên quản lý Sprint/Task và giảng viên giám sát tiến độ thực tế.</p>
           <ul>
-            <li><strong>Bảng Sinh viên:</strong> Cho phép trưởng nhóm lập kế hoạch Sprint, tạo task, kéo thả thẻ công việc giữa các cột (To-Do, In Progress, Review, Done), phân công thành viên và đặt Deadline.</li>
-            <li><strong>Bảng Giảng viên:</strong> Theo dõi tiến độ của tất cả các nhóm trong lớp học, xem thống kê biểu đồ Burndown Chart và xem các task bị trễ hạn để kịp thời nhắc nhở.</li>
-            <li><strong>Đồng bộ thời gian thực:</strong> Sử dụng Socket.io giúp cập nhật trạng thái kéo thả thẻ ngay lập tức trên màn hình của tất cả thành viên trong nhóm.</li>
+            <li><strong>Tính năng chi tiết:</strong> Kéo thả thẻ công việc giữa các cột (To-Do, In Progress, Review, Done), phân công (Assignee), đặt hạn chót (Deadline), đính kèm tệp bài làm, thảo luận trực tiếp trên Task, và tự động vẽ biểu đồ Burndown Chart cho nhóm đồ án.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Thành viên nhóm kéo thả Task &rarr; Client gửi sự kiện qua WebSocket (Socket.io) lên LMS Core &rarr; LMS Core cập nhật bảng <code>tasks</code> &rarr; Phát tín hiệu phát sóng (Broadcast) cập nhật thời gian thực đến màn hình của các thành viên khác trong nhóm đồ án.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Socket.io, React DnD/HTML5 Drag and Drop, PostgreSQL (bảng <code>tasks</code>, <code>sprints</code>, <code>project_groups</code>).</li>
           </ul>
         `
       },
       'api-gateway': {
         title: '🛡️ API Gateway & Bảo mật',
         desc: `
-          <p><strong>Mục tiêu:</strong> Cổng điều hướng tập trung làm nhiệm vụ bảo vệ, lọc và phân luồng toàn bộ Request đi vào hệ thống.</p>
+          <p><strong>Mục tiêu:</strong> Cổng kiểm soát tập trung giúp điều hướng luồng yêu cầu, lọc mã độc, xác thực bảo mật và giới hạn tần suất yêu cầu chống quá tải.</p>
           <ul>
-            <li><strong>Định tuyến (Routing):</strong> Điều hướng chính xác request từ Client đến Modular Monolith (LMS Core) hoặc FastAPI (AI Services).</li>
-            <li><strong>Xác thực & Phân quyền:</strong> Giải mã JWT token để xác định vai trò người dùng trước khi chuyển tiếp request vào bên trong hệ thống.</li>
-            <li><strong>Chống tấn công:</strong> Giới hạn tần suất yêu cầu (Rate Limiting) để chống DDOS và lọc sạch các mã độc hại (SQL Injection, XSS) trong payload đầu vào.</li>
+            <li><strong>Tính năng chi tiết:</strong> Định tuyến động (Dynamic Routing), phân tải tải trọng (Load Balancing), xác thực JWT tập trung, phân quyền dựa trên vai trò (RBAC), ghi log truy cập (Access Log), giới hạn tần suất (Rate Limiting), và chống tấn công XSS, SQL Injection.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Request từ Client &rarr; API Gateway kiểm tra whitelist, giải mã JWT &rarr; Xác định phân quyền &rarr; Nếu hợp lệ, chuyển tiếp request đến microservice đích (LMS Core hoặc AI Services) &rarr; Trả kết quả ngược lại Client.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Nginx, Kong Gateway hoặc NestJS Gateway, Rate-limiter-flexible, Redis lưu thông tin hạn ngạch IP (Rate Limit counter).</li>
           </ul>
         `
       },
       'he-dao-tao': {
         title: '🏫 Quản lý Hệ đào tạo & Chương trình học',
         desc: `
-          <p><strong>Mục tiêu:</strong> Định nghĩa cấu trúc khung chương trình đào tạo của từng hệ học (Chất lượng cao, Hệ chuẩn, Hệ liên thông, Học lại) và phân bổ kỳ học.</p>
+          <p><strong>Mục tiêu:</strong> Định cấu trúc chương trình đào tạo của từng hệ học (Chất lượng cao, Hệ thường, Liên thông) và áp dụng thang điểm độc lập khi học chung lớp.</p>
           <ul>
-            <li><strong>Khung chương trình:</strong> Quản lý danh sách môn học bắt buộc và tự chọn, số tín chỉ, điều kiện tiên quyết (phải qua môn A mới được học môn B).</li>
-            <li><strong>Bộ trọng số điểm (Scoring Weights):</strong> Cấu hình tỷ lệ điểm (Chuyên cần, Bài tập, Thi giữa kỳ, Thi cuối kỳ) theo từng hệ học cụ thể. Sinh viên hệ chất lượng cao và hệ thường học chung lớp vật lý sẽ được áp dụng bộ trọng số riêng biệt dựa trên liên kết chương trình học cá nhân.</li>
+            <li><strong>Tính năng chi tiết:</strong> Quản lý danh mục môn học, tín chỉ, môn tiên quyết, quản lý khung chương trình học theo từng chuyên ngành, và cấu hình động bộ trọng số điểm (Scoring Weights - Chuyên cần, Giữa kỳ, Cuối kỳ) riêng biệt theo từng hệ học của sinh viên.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Quản trị viên cấu hình khung đào tạo &rarr; Lưu vào database &rarr; Khi tính điểm môn học, GPA Engine đối chiếu thông tin hệ học của sinh viên trong bảng <code>student_curriculums</code> để lấy đúng bộ trọng số điểm tương ứng từ bảng <code>scoring_formulas</code> và tính toán.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> PostgreSQL (bảng <code>curriculums</code>, <code>course_requirements</code>, <code>scoring_formulas</code>, <code>student_curriculums</code>).</li>
           </ul>
         `
       },
       'nghiep-vu-lop': {
         title: '📅 Nghiệp vụ Lớp học vật lý',
         desc: `
-          <p><strong>Mục tiêu:</strong> Quản lý các hoạt động diễn ra trong phạm vi một lớp học cụ thể theo thời gian thực.</p>
+          <p><strong>Mục tiêu:</strong> Quản lý toàn bộ hoạt động giảng dạy, điểm danh chuyên cần, đơn từ nghỉ phép và cơ cấu nhóm học tập vật lý của từng lớp học.</p>
           <ul>
-            <li><strong>Thời khóa biểu & Điểm danh:</strong> Giảng viên ghi nhận chuyên cần bằng quét mã QR động (thay đổi sau mỗi 5 giây chống điểm danh hộ) hoặc điểm danh thủ công.</li>
-            <li><strong>Đơn xin nghỉ phép:</strong> Học viên nộp đơn online đính kèm minh chứng (giấy khám bệnh, ảnh chụp lý do). Hệ thống tự động chuyển giảng viên phê duyệt và tự trừ điểm chuyên cần hợp lệ.</li>
-            <li><strong>Chia nhóm (Grouping):</strong> Hỗ trợ chia nhóm tự động (ngẫu nhiên, theo học lực đồng đều) hoặc chia nhóm thủ công để làm đồ án môn học.</li>
+            <li><strong>Tính năng chi tiết:</strong> Điểm danh quét mã QR động thay đổi liên tục, chấm chuyên cần thủ công, nộp và xét duyệt đơn xin nghỉ phép trực tuyến, chia nhóm học tập tự động theo học lực đồng đều, và tạo lịch học thời khóa biểu tích hợp.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Giảng viên bật mã QR &rarr; Sinh viên quét qua App &rarr; Gửi tọa độ GPS + IP kiểm tra chống gian lận &rarr; Ghi nhận chuyên cần vào bảng <code>attendance_logs</code>. Sinh viên nộp đơn nghỉ phép &rarr; Giảng viên nhận thông báo và phê duyệt &rarr; Tự động cập nhật lại bảng chuyên cần.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> QR Code Generator, định vị GPS, PostgreSQL (bảng <code>class_sessions</code>, <code>attendance_logs</code>, <code>leave_requests</code>, <code>class_enrollments</code>).</li>
           </ul>
         `
       },
       'quan-ly-du-an': {
         title: '🛠️ Module Quản lý Dự án (LMS Core PM)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Cung cấp tầng logic dữ liệu nghiệp vụ quản lý dự án nằm trong LMS Core.</p>
+          <p><strong>Mục tiêu:</strong> Cung cấp hạ tầng logic và cơ sở dữ liệu để lưu trữ, liên kết thông tin quản lý dự án nhóm của sinh viên nằm trong LMS Core.</p>
           <ul>
-            <li><strong>Data Model:</strong> Quản lý lưu trữ thông tin thực thể Dự án (Project), Sprint, Backlog Item, Thẻ công việc (Task) và các liên kết khóa ngoại với Sinh viên/Giảng viên.</li>
-            <li><strong>Tính toán chỉ số trễ hạn:</strong> Background job quét các task đã quá deadline mà chưa chuyển sang trạng thái "Done". Ghi nhận số ngày trễ hạn của từng sinh viên vào database để AI Services làm đầu vào tính Risk Score.</li>
+            <li><strong>Tính năng chi tiết:</strong> Khởi tạo dự án môn học, liên kết dự án với nhóm học viên, lưu trữ sơ đồ phân rã công việc (WBS), lưu trữ lịch sử thay đổi thẻ công việc (Task Activity Logs), và tính toán tự động số ngày trễ hạn của các thẻ công việc.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Hoạt động kéo thả thẻ từ bảng Kanban &rarr; Lưu vào bảng <code>task_activities</code>. Định kỳ (background job lúc 00:00 hàng ngày) quét qua bảng <code>tasks</code> để lọc các task chưa "Done" quá deadline &rarr; Cập nhật số ngày trễ vào bảng <code>task_overdue_stats</code> &rarr; Cung cấp dữ liệu đầu vào cho AI Services tính toán Risk Score.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Cron Jobs, PostgreSQL (bảng <code>tasks</code>, <code>project_groups</code>, <code>task_overdue_stats</code>, <code>task_activities</code>).</li>
           </ul>
         `
       },
       'khao-thi': {
         title: '📊 Module Khảo thí tự động & Cải tiến thi cử',
         desc: `
-          <p><strong>Mục tiêu:</strong> Đánh giá lại hệ thống, số hóa quy trình thi cử và tự động hóa khâu chấm thi, phúc khảo.</p>
+          <p><strong>Mục tiêu:</strong> Số hóa hoàn toàn quy trình tổ chức thi cử, chấm thi tự động và rút ngắn quy trình phúc khảo điểm số.</p>
           <ul>
-            <li><strong>AI Sinh đề thi ngẫu nhiên:</strong> Tự động tổng hợp câu hỏi từ ngân hàng đề theo ma trận chuẩn đầu ra môn học (CLO) và chuẩn đầu ra chương trình (PLO).</li>
-            <li><strong>Chấm bài tự động:</strong> Tự động hóa chấm thi trắc nghiệm và kiểm thử mã nguồn (Auto-grading) đối với môn học Công nghệ thông tin.</li>
-            <li><strong>Phúc khảo tự động bước 1:</strong> AI hỗ trợ đối chiếu bài làm của sinh viên với đáp án mẫu và thang điểm chi tiết (rubric) để giải thích/trả lời khiếu nại bước 1 cho sinh viên, giảm 80% khối lượng phúc khảo thủ công.</li>
-            <li><strong>Đồng bộ điểm tức thời:</strong> Tự động đồng bộ kết quả thi từ hệ thống khảo thí chuyên biệt về LMS Core ngay sau khi có điểm đã được duyệt.</li>
+            <li><strong>Tính năng chi tiết:</strong> AI sinh đề thi ngẫu nhiên theo ma trận CLO/PLO, chấm thi tự động bài trắc nghiệm và chấm code tự động (Auto-grading) bằng bộ testcases chạy sandbox, AI hỗ trợ phúc khảo tự động bước 1, và khóa sổ điểm chống sửa đổi tùy tiện sau thời gian quy định.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Sinh viên làm bài thi code &rarr; Bài nộp chuyển vào Docker Sandbox &rarr; Chạy qua các testcases &rarr; Trả kết quả điểm thi về lưu bảng <code>exam_results</code> &rarr; Đồng bộ sang module tính GPA. Nếu có phúc khảo, AI quét bài làm so với rubric giảng viên để giải thích phản hồi tự động cho sinh viên trước khi gửi giảng viên chấm lại.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Docker Sandbox API, Compilers, PostgreSQL (bảng <code>exams</code>, <code>exam_questions</code>, <code>exam_results</code>, <code>grade_locks</code>), GPA Engine.</li>
           </ul>
         `
       },
       'e-learning': {
         title: '💾 Quản lý Học liệu số (E-learning & Customize)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Lưu trữ, phân phối và tùy biến linh hoạt các loại tài nguyên học tập theo từng môn học phục vụ sinh viên học tập chủ động.</p>
+          <p><strong>Mục tiêu:</strong> Cung cấp kho tài liệu đa phương tiện phong phú và cho phép giảng viên tùy biến kết cấu bài học độc lập theo đặc thù môn học.</p>
           <ul>
-            <li><strong>4 Loại học liệu cốt lõi:</strong> Hỗ trợ tích hợp và phân phối chuẩn hóa: <strong>Video</strong> (bài giảng trực tuyến phát trực tiếp/streaming), <strong>Bài đọc</strong> (tài liệu PDF, giáo trình, bài báo khoa học), <strong>Slide</strong> (bài trình chiếu bài giảng bài bản), và <strong>Trắc nghiệm</strong> (bài kiểm tra tự động củng cố kiến thức sau mỗi bài học).</li>
-            <li><strong>Customize theo từng môn học:</strong> Cho phép cấu hình linh hoạt cấu trúc học liệu tùy theo đặc thù môn học. Ví dụ: môn Công nghệ thông tin sẽ ưu tiên tích hợp Video + Trắc nghiệm code tự động; môn Luật/Xã hội học ưu tiên Bài đọc chuyên sâu + Slide hệ thống hóa kiến thức.</li>
-            <li><strong>Tối ưu hóa băng thông & Streaming:</strong> Tích hợp mạng phân phối nội dung (CDN) và cơ chế HTTP Live Streaming (HLS) giúp tự động điều chỉnh độ phân giải video (360p/720p/1080p) theo băng thông mạng của sinh viên.</li>
+            <li><strong>Tính năng chi tiết:</strong> Quản lý 4 loại học liệu cốt lõi: <strong>Video bài giảng</strong>, <strong>Bài đọc chuyên sâu</strong>, <strong>Slide trình chiếu</strong>, <strong>Trắc nghiệm củng cố</strong>; cấu hình hiển thị/ẩn học liệu theo tiến trình thời gian; tùy biến kết cấu học liệu độc lập theo từng môn học; và tích hợp bình luận/hỏi đáp trực tiếp dưới học liệu.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Giảng viên tải học liệu lên hệ thống &rarr; Lưu file vào Object Storage và ghi log metadata vào bảng <code>course_learning_materials</code> &rarr; Cấu hình cấu trúc bài giảng theo môn học. Khi sinh viên truy cập, hệ thống render giao diện học tập tùy biến theo đúng cấu trúc cấu hình riêng của môn đó.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> AWS S3 hoặc Object Storage tương đương, CDN Cloudflare, HLS video streaming, PostgreSQL (bảng <code>courses</code>, <code>course_sections</code>, <code>course_learning_materials</code>).</li>
           </ul>
         `
       },
       'thong-bao': {
         title: '🔔 Hệ thống thông báo tự động',
         desc: `
-          <p><strong>Mục tiêu:</strong> Đảm bảo thông tin học vụ quan trọng được truyền đạt kịp thời tới đúng đối tượng.</p>
+          <p><strong>Mục tiêu:</strong> Đảm bảo truyền tải thông tin học tập, cảnh báo tiến độ và kết quả thi cử kịp thời, chính xác đến đúng đối tượng nhận.</p>
           <ul>
-            <li><strong>Đa kênh (Omnichannel):</strong> Gửi thông báo qua App Notification (In-App), Email, và tin nhắn SMS hoặc Lark/Base Webhook đối với các thông báo khẩn cấp.</li>
-            <li><strong>Trigger tự động:</strong> Kích hoạt gửi thông báo khi sinh viên bị giảng viên đánh giá vắng học không phép, khi có điểm thi mới, khi deadline task dự án còn 24 giờ, hoặc khi có cảnh báo kỷ luật.</li>
+            <li><strong>Tính năng chi tiết:</strong> Gửi thông báo đa kênh (In-app notification, Email, SMS, Webhook Lark/Base), phân nhóm người nhận thông báo, và lập lịch gửi thông báo tự động theo sự kiện (ví dụ: cảnh báo trễ task trước 24 giờ, thông báo điểm thi mới, thông báo vắng học).</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Sự kiện hệ thống xảy ra (ví dụ: phát hiện nghỉ học quá 3 buổi từ bảng chuyên cần) &rarr; Kích hoạt Notification Engine &rarr; Lấy template thông báo &rarr; Đẩy vào hàng đợi (Queue) &rarr; Phân phối đến các kênh (Email API, SMS Gate, Lark Webhook) &rarr; Lưu trạng thái đã đọc vào bảng <code>notification_logs</code>.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> BullMQ (Redis-based queue), Nodemailer (Email), Twilio/SMS API, PostgreSQL (bảng <code>notification_templates</code>, <code>notification_logs</code>).</li>
           </ul>
         `
       },
       'cong-1-cua': {
         title: '🚪 Cổng dịch vụ 1 cửa (Mô hình Một Cửa - Rika)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Luật hóa và chuyên nghiệp hóa dịch vụ chăm sóc sinh viên. Tất cả sinh viên chỉ liên hệ làm việc qua 1 cổng duy nhất là <strong>Rika</strong>.</p>
+          <p><strong>Mục tiêu:</strong> Luật hóa và chuyên nghiệp hóa khâu hỗ trợ sinh viên thông qua một đầu mối liên hệ duy nhất là <strong>Rika</strong>, tự động hóa xử lý đơn từ hành chính.</p>
           <ul>
-            <li><strong>Thống nhất & Tự động hóa:</strong> Gom toàn bộ yêu cầu hành chính (nghỉ phép, học phí, điểm số, khiếu nại) vào cổng dịch vụ 1 cửa. Hệ thống tự động phân loại, giải quyết hoặc điều hướng đến nhân sự phụ trách mà sinh viên không cần biết.</li>
-            <li><strong>Đại diện chung Rika:</strong> Sinh viên không liên hệ trực tiếp với từng nhân sự hành chính của RE. Tất cả phản hồi, hỗ trợ đều đứng tên <strong>Rika</strong> (phụ trách bởi hệ thống tự động phối hợp với Cố vấn phụ trách lớp chia theo số lượng SV).</li>
-            <li><strong>Định nghĩa Vai trò mới:</strong> 
-              <ul>
-                <li><strong>Giáo viên chủ nhiệm:</strong> Khuyến khích là Trợ giảng (TAs) trực tiếp đồng hành hỗ trợ học vụ hàng ngày.</li>
-                <li><strong>Cố vấn phụ trách lớp:</strong> Quản lý số lượng SV theo phân khu, vận hành dưới tên chung Rika.</li>
-              </ul>
-            </li>
+            <li><strong>Tính năng chi tiết:</strong> Tiếp nhận yêu cầu dịch vụ công (xin bảng điểm, phúc khảo, nghỉ học tạm thời, xác nhận sinh viên), tự động điều phối xử lý đến các phòng ban nghiệp vụ liên quan, định nghĩa vai trò mới (Giáo viên chủ nhiệm phụ trách đồng hành là Trợ giảng, Cố vấn phụ trách lớp), và lấy tên chung đại diện hỗ trợ là **Rika**.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Sinh viên gửi yêu cầu hỗ trợ hành chính &rarr; Lưu vào bảng <code>one_gate_requests</code> &rarr; Hệ thống tự động phân loại loại yêu cầu và chỉ định xử lý đến nhân viên phòng ban tương ứng thông qua queue. Kết quả xử lý được gửi lại cho sinh viên hoàn toàn dưới tên định danh đại diện là <strong>Rika</strong>.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Ticketing Workflow Engine, PostgreSQL (bảng <code>one_gate_requests</code>, <code>one_gate_categories</code>, <code>class_advisors</code>).</li>
           </ul>
         `
       },
       'ai-project-agent': {
         title: '🪄 AI Project Agent (Tự động phân rã & Quét tiến độ)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Trợ lý AI chuyên trách hỗ trợ quản lý dự án nhóm và thúc đẩy tiến độ tự động.</p>
+          <p><strong>Mục tiêu:</strong> Trợ lý AI chuyên trách hỗ trợ sinh viên phân rã đồ án thành các công việc nhỏ và giám sát rủi ro trễ hạn của dự án nhóm.</p>
           <ul>
-            <li><strong>Tự động phân rã công việc (Project Breakdown):</strong> Giảng viên chỉ cần nhập tên đề tài và mô tả ngắn. AI Agent sẽ phân tích và tự động sinh ra danh sách 5-10 thẻ công việc (Backlog tasks) chi tiết (mô tả task, tiêu chí hoàn thành, gợi ý công nghệ) và đẩy thẳng vào bảng Kanban của nhóm.</li>
-            <li><strong>Giám sát trễ hạn:</strong> AI Agent quét bảng Kanban của các nhóm hàng ngày. Nếu phát hiện thành viên trễ deadline các task quan trọng (Critical path) quá 3 ngày, AI sẽ tự động gửi cảnh báo và tăng điểm số rủi ro (Risk Score) của sinh viên đó lên.</li>
+            <li><strong>Tính năng chi tiết:</strong> Tự động phân tích tên đề tài và mô tả để phân rã thành danh sách 5-10 backlog tasks (mô tả task, tiêu chí hoàn thành, công nghệ gợi ý), theo dõi trễ hạn thẻ công việc, tự động cảnh báo trễ deadline gửi trực tiếp đến sinh viên trễ và trưởng nhóm.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Nhóm đồ án nhập đề tài &rarr; AI Project Agent gọi LLM sinh subtasks &rarr; Đẩy danh sách task vào bảng <code>tasks</code> của LMS Core. Định kỳ hàng ngày, Agent quét bảng <code>tasks</code> &rarr; Phát hiện thành viên trễ deadline các task trọng yếu quá 3 ngày &rarr; Gửi tín hiệu tăng Risk Score của sinh viên đó lên 15%.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> FastAPI, OpenAI API / Llama 3, LangGraph để quản lý workflow của AI Agent, PostgreSQL (bảng <code>tasks</code>, <code>project_groups</code>).</li>
           </ul>
         `
       },
       'ai-cham-bai': {
         title: '✍️ AI chấm bài tự động & Nhận xét gợi ý',
         desc: `
-          <p><strong>Mục tiêu:</strong> Hỗ trợ giảng viên giảm tải áp lực chấm bài tập về nhà và các báo cáo tiến độ đồ án.</p>
+          <p><strong>Mục tiêu:</strong> Hỗ trợ giảng viên chấm nhanh bài tập về nhà và các báo cáo tiến độ đồ án bằng cách so sánh bài làm với rubric đáp án.</p>
           <ul>
-            <li><strong>Đối chiếu đáp án bằng LLM:</strong> AI đọc tệp bài nộp của sinh viên (file code, file PDF báo cáo) và so sánh với đáp án mẫu/rubric chấm điểm của giảng viên thông qua Prompt Engineering nâng cao.</li>
-            <li><strong>Sinh nhận xét chi tiết:</strong> AI chỉ ra chính xác sinh viên đã làm tốt phần nào, phần nào bị thiếu hoặc sai sót kiến thức, đồng thời đưa ra điểm số gợi ý để giảng viên duyệt nhanh chỉ bằng một click.</li>
+            <li><strong>Tính năng chi tiết:</strong> Đọc nội dung tệp bài nộp sinh viên (PDF, DOCX, tệp mã nguồn code), đối chiếu phân tích bài nộp so với barem điểm (Rubric) của giảng viên bằng mô hình LLM, chấm điểm gợi ý, và viết nhận xét chi tiết ưu/nhược điểm bài làm của sinh viên.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Sinh viên nộp bài &rarr; Lưu tệp bài nộp &rarr; AI Service trích xuất nội dung tệp &rarr; Gọi mô hình LLM đối chiếu nội dung bài làm với Rubric chấm điểm của giảng viên &rarr; Sinh kết quả nhận xét và điểm số gợi ý lưu vào bảng <code>ai_grading_suggestions</code> &rarr; Giảng viên xem, tùy chỉnh và duyệt điểm chỉ với 1 click.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> PDFMiner, Docx2txt, FastAPI, OpenAI API / Claude 3 Sonnet, PostgreSQL (bảng <code>ai_grading_suggestions</code>, <code>student_submissions</code>).</li>
           </ul>
         `
       },
       'ai-risk-score': {
         title: '🚨 Dự báo Risk Score thời gian thực',
         desc: `
-          <p><strong>Mục tiêu:</strong> Cảnh báo sớm nguy cơ trượt môn, nghỉ học hoặc bảo lưu của sinh viên.</p>
+          <p><strong>Mục tiêu:</strong> Nhận diện sớm các sinh viên có nguy cơ trượt môn, nghỉ học hoặc tự ý bảo lưu để nhà trường có phương án hỗ trợ kịp thời.</p>
           <ul>
-            <li><strong>Thuật toán phân tích rủi ro:</strong> Chạy mô hình học máy phân tích đa chiều dữ liệu: tần suất vắng học, điểm số bài kiểm tra xu hướng giảm, số ngày trễ hạn task dự án (đầu vào từ PM module), và mức độ tương tác học liệu trên hệ thống.</li>
-            <li><strong>Phân loại rủi ro:</strong> Gán mức độ rủi ro (Thấp, Trung bình, Cao) kèm theo biểu đồ phân tích nguyên nhân cốt lõi để Cố vấn học tập/CTSV có phương án hỗ trợ kịp thời.</li>
+            <li><strong>Tính năng chi tiết:</strong> Phân tích đa chiều dữ liệu hành vi sinh viên để tính chỉ số rủi ro Risk Score (thang điểm 100), gán nhãn mức độ rủi ro (Thấp, Trung bình, Cao), và hiển thị biểu đồ phân tích nguyên nhân cốt lõi gây ra rủi ro học vụ (vắng học nhiều, trễ hạn task, điểm kiểm tra thấp).</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> AI Risk Score Service thu thập dữ liệu chuyên cần, điểm kiểm tra, thời lượng tương tác LMS, số ngày trễ task dự án &rarr; Chạy mô hình phân tích rủi ro &rarr; Ghi nhận Risk Score mới vào bảng <code>student_risk_profiles</code> &rarr; Nếu vượt ngưỡng cảnh báo (ví dụ > 70/100), tự động đẩy cảnh báo sang module thông báo và trợ lý cố vấn học tập.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Python Machine Learning Server (Scikit-Learn/XGBoost), PostgreSQL (bảng <code>student_risk_profiles</code>, <code>risk_factor_logs</code>).</li>
           </ul>
         `
       },
       'dynamic-re-grouping': {
         title: '🔄 Cơ chế Dynamic Re-Grouping',
         desc: `
-          <p><strong>Mục tiêu:</strong> Tự động điều chỉnh nhóm học tập để tối ưu hóa hiệu quả kèm cặp đồng đẳng.</p>
+          <p><strong>Mục tiêu:</strong> Tối ưu hóa phân bổ nhóm đồ án dựa trên mức độ rủi ro học vụ thực tế của các thành viên để tránh đổ vỡ dự án.</p>
           <ul>
-            <li><strong>Phát hiện nhóm mất cân bằng:</strong> Khi một nhóm dự án có quá nhiều thành viên bị cảnh báo Risk Score cao (học lực yếu hoặc trễ task liên tục), hệ thống sẽ phát tín hiệu cảnh báo mất cân bằng tiến độ.</li>
-            <li><strong>Gợi ý cơ cấu lại:</strong> Hệ thống đề xuất giảng viên điều chuyển, ghép nối sinh viên khá giỏi hỗ trợ nhóm yếu, hoặc tái cấu trúc lại nhóm học tập phụ đạo dựa trên các tiêu chí tương thích về lịch rảnh và kỹ năng.</li>
+            <li><strong>Tính năng chi tiết:</strong> Tự động phát hiện các nhóm có quá nhiều thành viên bị cảnh báo rủi ro cao (nguy cơ trễ hạn đồ án toàn nhóm), gợi ý điều chuyển thành viên khá giỏi kèm cặp nhóm yếu hơn, và đề xuất tái cấu trúc nhóm phụ đạo dựa trên lịch rảnh của học viên.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Khi có sự thay đổi chỉ số Risk Score &rarr; Re-Grouping Engine chạy thuật toán phân tích sự phân bổ rủi ro theo nhóm &rarr; Nếu phát hiện nhóm đồ án có &ge; 50% thành viên rủi ro cao &rarr; Gửi kịch bản đề xuất điều chỉnh nhóm đến giảng viên &rarr; Sau khi giảng viên duyệt, cập nhật lại bảng <code>project_groups</code>.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Thuật toán Clustering/K-Means, PostgreSQL (bảng <code>project_groups</code>, <code>regrouping_proposals</code>).</li>
           </ul>
         `
       },
       'ai-assistant': {
         title: '🧠 Trợ lý Cố vấn & Kịch bản Chăm sóc tự động',
         desc: `
-          <p><strong>Mục tiêu:</strong> Cung cấp công cụ hỗ trợ Cố vấn học tập và phòng CTSV xử lý nhanh các trường hợp sinh viên gặp khó khăn.</p>
+          <p><strong>Mục tiêu:</strong> Công cụ đắc lực hỗ trợ Cố vấn học tập và phòng CTSV (One Gate) tự động hóa quy trình soạn thảo email nhắc nhở và chuẩn bị kịch bản hỗ trợ sinh viên.</p>
           <ul>
-            <li><strong>Tóm tắt hành vi học viên:</strong> AI tổng hợp toàn bộ lịch sử học tập, ý thức chuyên cần và các cảnh báo rủi ro của sinh viên thành một báo cáo ngắn gọn dài 3 dòng.</li>
-            <li><strong>Sinh kịch bản tư vấn:</strong> AI tự động soạn thảo nội dung thư nhắc nhở, kịch bản trao đổi trực tiếp hoặc email gửi phụ huynh học sinh cá nhân hóa theo đúng tình trạng của sinh viên (nhóm A, B, C, D).</li>
+            <li><strong>Tính năng chi tiết:</strong> AI tự động tóm tắt toàn bộ hồ sơ học tập và hành vi của sinh viên gặp khó khăn thành báo cáo ngắn 3 dòng, tự động sinh kịch bản tư vấn phù hợp với nguyên nhân rủi ro, và tự động soạn thảo thư nhắc nhở/email gửi phụ huynh được cá nhân hóa theo tình trạng sinh viên.</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Cố vấn học tập mở hồ sơ sinh viên bị cảnh báo &rarr; Hệ thống gọi AI Assistant &rarr; Tổng hợp dữ liệu từ <code>student_risk_profiles</code>, điểm số, chuyên cần &rarr; Sinh báo cáo tóm tắt, kịch bản hỗ trợ 1-1, và thư mẫu nhắc nhở gửi trực tiếp trên giao diện cố vấn &rarr; Cố vấn phê duyệt gửi đi qua email/Lark.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> FastAPI, LLM Prompt Engineering, PostgreSQL (bảng <code>advisor_cases</code>, <code>student_risk_profiles</code>).</li>
           </ul>
         `
       },
       'ai-dashboard': {
         title: '📈 Dashboard Quản trị & Dự báo Xu hướng học thuật',
         desc: `
-          <p><strong>Mục tiêu:</strong> Giúp Ban giám hiệu và Phòng đào tạo có cái nhìn tổng quan dài hạn về chất lượng dạy và học.</p>
+          <p><strong>Mục tiêu:</strong> Giúp Ban giám hiệu và Phòng đào tạo có cái nhìn tổng quan dài hạn về chất lượng đào tạo và dự đoán trước xu hướng học tập.</p>
           <ul>
-            <li><strong>Báo cáo dự báo học vụ:</strong> Thống kê trực quan tỷ lệ sinh viên có nguy cơ fail môn theo từng khoa, từng khóa học. Dự báo tỷ lệ sinh viên ra trường đúng hạn.</li>
-            <li><strong>Đánh giá chuẩn đầu ra (PLO/CLO):</strong> AI phân tích ma trận điểm thi để đánh giá mức độ đạt chuẩn đầu ra chương trình đào tạo của sinh viên, từ đó gợi ý cải tiến khung chương trình học cho phù hợp.</li>
+            <li><strong>Tính năng chi tiết:</strong> Biểu đồ dự báo tỷ lệ trượt môn theo khoa/ngành học, dự báo tỷ lệ sinh viên ra trường đúng hạn/trễ hạn, và AI phân tích đánh giá ma trận kết quả điểm thi để đo lường mức độ đạt chuẩn đầu ra chương trình đào tạo (PLO) và chuẩn đầu ra môn học (CLO).</li>
+            <li><strong>Luồng dữ liệu (Data Flow):</strong> Công cụ ETL định kỳ tổng hợp dữ liệu học tập toàn trường &rarr; AI Predictive Model chạy thuật toán dự báo xu hướng &rarr; Ghi kết quả vào bảng <code>academic_predictions</code> &rarr; Render dữ liệu trực quan lên Dashboard quản trị cho Ban giám hiệu.</li>
+            <li><strong>Công nghệ & Cơ sở dữ liệu:</strong> Python Analytics Server, Apache Superset hoặc D3.js frontend visualization, PostgreSQL (bảng <code>academic_predictions</code>, <code>plo_clo_matrix_results</code>).</li>
           </ul>
         `
       }
