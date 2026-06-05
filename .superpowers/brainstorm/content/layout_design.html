@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS AI - Kế hoạch triển khai</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-card-hover: rgba(30, 41, 59, 0.9);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --secondary: #a855f7;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-hidden: scroll;
+      height: 100vh;
+      display: flex;
+    }
+
+    /* Glassmorphism Background Blur */
+    .bg-glows {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+    }
+
+    .glow-1 {
+      top: -100px;
+      left: -100px;
+      background: var(--primary);
+    }
+
+    .glow-2 {
+      bottom: -150px;
+      right: -100px;
+      background: var(--secondary);
+    }
+
+    /* Sidebar Styling */
+    aside {
+      width: var(--sidebar-width);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(16px);
+      border-right: 1px border-solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      padding: 2rem 1.5rem;
+      border-bottom: 1px border-solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 1.5rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+    }
+
+    .menu-item.active {
+      background: var(--primary-glow);
+      color: var(--primary);
+      border-color: rgba(56, 189, 248, 0.2);
+    }
+
+    .menu-icon {
+      font-size: 1.2rem;
+      width: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .sidebar-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Main Content Styling */
+    main {
+      flex-grow: 1;
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    header {
+      padding: 1.5rem 2.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .header-info h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .header-info p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .quick-stats {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .stat-badge {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-badge span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .stat-badge.success span.dot { background: var(--success); }
+    .stat-badge.secondary span.dot { background: var(--secondary); }
+
+    .content-area {
+      padding: 2.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Tab content wrapper */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Glassmorphic card styling */
+    .dashboard-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mockups and diagrams placeholders */
+    .wireframe-container {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .wireframe-placeholder-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glows">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside>
+    <div class="sidebar-header">
+      <span class="brand-title">LMS AI</span>
+      <span class="brand-subtitle">Kế Hoạch Triển Khai</span>
+    </div>
+    
+    <ul class="sidebar-menu">
+      <li class="menu-item active" onclick="switchTab('arch')">
+        <span class="menu-icon">📐</span>
+        <span>Kiến Trúc Tổng Thể</span>
+      </li>
+      <li class="menu-item" onclick="switchTab('functions')">
+        <span class="menu-icon">🌿</span>
+        <span>Cây Chức Năng</span>
+      </li>
+      <li class="menu-item" onclick="switchTab('roadmap')">
+        <span class="menu-icon">📅</span>
+        <span>Lộ Trình Triển Khai</span>
+      </li>
+      <li class="menu-item" onclick="switchTab('cssv')">
+        <span class="menu-icon">👥</span>
+        <span>Quy Trình CSSV</span>
+      </li>
+      <li class="menu-item" onclick="switchTab('ai-pipeline')">
+        <span class="menu-icon">⚡</span>
+        <span>AI Services Pipeline</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <span>Đang thiết kế - Version 1.0</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <header>
+      <div class="header-info">
+        <h1 id="current-tab-title">Kiến Trúc Tổng Thể</h1>
+        <p id="current-tab-desc">Kiến trúc lai Hybrid kết hợp Modular Monolith & Microservices</p>
+      </div>
+      <div class="quick-stats">
+        <div class="stat-badge success">
+          <span class="dot"></span>
+          <span>Core: Monolith</span>
+        </div>
+        <div class="stat-badge secondary">
+          <span class="dot"></span>
+          <span>AI: Microservices</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <!-- Tab 1: Kiến trúc tổng thể -->
+      <div id="tab-arch" class="tab-content active">
+        <div class="dashboard-card">
+          <div class="card-title">🌐 Phác thảo giao diện Kiến Trúc Tổng Thể</div>
+          <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+            Sơ đồ này sẽ biểu diễn 3 tầng: Người dùng -> API Gateway -> Các Services bên dưới. Người dùng có thể di chuột vào các khối để làm sáng các luồng dữ liệu hoặc click để đọc công dụng chi tiết của từng khối.
+          </p>
+          <div class="wireframe-container">
+            <div class="wireframe-placeholder-icon">📐</div>
+            <h3>Sơ đồ Kiến Trúc Tương Tác SVG</h3>
+            <p>Sơ đồ khối vẽ bằng SVG sẽ hiển thị tại đây ở bản thiết kế hoàn thiện.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Cây chức năng -->
+      <div id="tab-functions" class="tab-content">
+        <div class="dashboard-card">
+          <div class="card-title">🌿 Phác thảo giao diện Cây Chức Năng</div>
+          <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+            Sơ đồ này sẽ hiển thị một Mindmap có cấu trúc phân tầng rõ ràng (Tầng điều hướng, LMS Core, AI Services). Bạn có thể đóng/mở (collapse/expand) từng nhánh để tập trung đọc nhánh quan tâm.
+          </p>
+          <div class="wireframe-container">
+            <div class="wireframe-placeholder-icon">🌿</div>
+            <h3>Collapsible Mindmap</h3>
+            <p>Cây sơ đồ tư duy có khả năng tương tác co dãn sẽ hiển thị ở đây.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Lộ trình -->
+      <div id="tab-roadmap" class="tab-content">
+        <div class="dashboard-card">
+          <div class="card-title">📅 Phác thảo giao diện Lộ Trình Triển Khai</div>
+          <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+            Lộ trình 3 giai đoạn sẽ được biểu diễn dưới dạng các thẻ (cards) nằm trên trục thời gian. Click vào mỗi giai đoạn sẽ mở ra danh sách các công việc cụ thể cần làm kèm trạng thái dự kiến.
+          </p>
+          <div class="wireframe-container">
+            <div class="wireframe-placeholder-icon">📅</div>
+            <h3>Interactive Timeline</h3>
+            <p>Trục thời gian 3 giai đoạn tương tác hiển thị ở đây.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Quy trình CSSV -->
+      <div id="tab-cssv" class="tab-content">
+        <div class="dashboard-card">
+          <div class="card-title">👥 Phác thảo giao diện Quy trình CSSV & Phân Loại Nhóm</div>
+          <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+            Hiển thị quy trình lọc sinh viên nghỉ học và phân loại sinh viên thành 4 nhóm A, B, C, D sau môn học. Click vào từng nhóm để xem đặc điểm phân loại và kịch bản xử lý tương ứng của Giảng viên / Phòng CTSV.
+          </p>
+          <div class="wireframe-container">
+            <div class="wireframe-placeholder-icon">👥</div>
+            <h3>Sơ đồ luồng phân loại & Kịch bản</h3>
+            <p>Biểu đồ phân nhóm và bộ thẻ kịch bản xử lý hiển thị ở đây.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: AI Pipeline -->
+      <div id="tab-ai-pipeline" class="tab-content">
+        <div class="dashboard-card">
+          <div class="card-title">⚡ Phác thảo giao diện AI Services Pipeline</div>
+          <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+            Mô phỏng luồng dữ liệu chạy từ Data Source qua Data Pipeline, Vector DB và kết nối tới LLM để tạo ra các tính năng AI Assistant, AI chấm điểm, Dự đoán. Có hiệu ứng animation di chuyển của luồng dữ liệu.
+          </p>
+          <div class="wireframe-container">
+            <div class="wireframe-placeholder-icon">⚡</div>
+            <h3>AI Data Flow Animation</h3>
+            <p>Sơ đồ luồng dữ liệu động của AI Microservices hiển thị ở đây.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const tabs = {
+      'arch': { title: 'Kiến Trúc Tổng Thể', desc: 'Kiến trúc lai Hybrid kết hợp Modular Monolith & Microservices' },
+      'functions': { title: 'Cây Chức Năng', desc: 'Cơ cấu chi tiết các phân hệ LMS Core và AI Services' },
+      'roadmap': { title: 'Lộ Trình Triển Khai', desc: 'Tiến độ và các hạng mục theo 3 giai đoạn' },
+      'cssv': { title: 'Quy Trình CSSV & Phân Loại Nhóm', desc: 'Cơ chế chăm sóc sinh viên tự động và kịch bản điều trị theo nhóm' },
+      'ai-pipeline': { title: 'AI Services Pipeline', desc: 'Luồng dữ liệu xử lý, lưu trữ Vector và suy luận qua LLM' }
+    };
+
+    function switchTab(tabId) {
+      // Update menu active class
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+
+      // Update Header
+      document.getElementById('current-tab-title').innerText = tabs[tabId].title;
+      document.getElementById('current-tab-desc').innerText = tabs[tabId].desc;
+
+      // Update Tab Content visibility
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
