@@ -8,23 +8,43 @@ flowchart TB
   FE --> GW["API Gateway<br/>Điều hướng request, xác thực,<br/>phân quyền, ghi log, chuẩn hóa dữ liệu"]
 
   GW --> AUTH["Auth Service<br/>Đăng nhập, phân quyền,<br/>quản lý phiên"]
-  GW --> CORE["LMS Core<br/>Modular Monolith"]
-  GW --> AI["AI Services<br/>Microservices"]
+  GW --> CORE["LMS Core<br/>Modular Monolith<br/>(Lớp học, Nghiệp vụ, Quản lý dự án)"]
+  GW --> AI["AI Services<br/>Microservices<br/>(RAG, Risk Score, AI PM Agent)"]
 
-  CORE --> RDB["Relational Database<br/>Dữ liệu nghiệp vụ lõi"]
+  CORE --> RDB["Relational Database<br/>Dữ liệu lõi & Quản lý dự án (Tasks)"]
   CORE --> NOSQL["NoSQL Database<br/>Log, trạng thái, dữ liệu linh hoạt"]
 
   AI --> VDB["Vector Database<br/>Tri thức, tài liệu, embedding"]
-  AI --> LLM["LLM API / Local LLM<br/>RAG, phân tích, sinh nội dung"]
+  AI --> LLM["LLM API / Local LLM<br/>RAG, phân tích, sinh nội dung, sinh task"]
 
-  CORE <--> AI_SYNC["Đồng bộ chỉ số học tập,<br/>risk score, nhóm sinh viên,<br/>gợi ý can thiệp"]
+  CORE <--> AI_SYNC["Đồng bộ chỉ số học tập,<br/>risk score, nhóm sinh viên,<br/>task dự án & trễ hạn"]
   AI <--> AI_SYNC
 
   CORE --> NOTI["Hệ thống thông báo tự động"]
   CORE --> ONE["Cổng dịch vụ 1 cửa"]
   CORE --> EXAM["Hệ thống Khảo thí chuyên biệt"]
-  CORE --> LARK["Lark/Base<br/>Group hỗ trợ, bàn giao danh sách"]
+  CORE --> LARK["Lark/Base<br/>Group hỗ trợ, bàn giao danh sách, báo trễ task"]
 ```
+
+### 1.2 Các vấn đề tồn tại ở hệ thống cũ & Giải pháp cải tiến
+
+Hệ thống quản lý đào tạo hiện tại đang gặp một số bất cập lớn về nghiệp vụ cốt lõi. LMS AI phiên bản mới giải quyết triệt để các vấn đề này thông qua định hướng kiến trúc như sau:
+
+1. **Sinh viên thuộc các hệ học khác nhau học cùng một lớp vật lý:**
+   - *Vấn đề:* Ràng buộc chương trình học và trọng số điểm theo Lớp (Class), dẫn đến việc sinh viên chất lượng cao, hệ chuẩn, hoặc học lại cùng lớp không thể áp dụng thang điểm khác nhau.
+   - *Giải pháp:* Tách biệt thực thể **Lớp học (ClassSession)** khỏi **Chương trình học của Sinh viên (StudentCurriculum)**. Hệ thống tự động ánh xạ bộ trọng số điểm theo hệ đào tạo riêng của từng sinh viên.
+
+2. **Lưu giữ lịch sử dữ liệu lớp học sau từng môn học:**
+   - *Vấn đề:* Khi lớp chuyển sang môn học mới, dữ liệu môn cũ (bao gồm giảng viên phụ trách và các chỉ số chuyên cần, điểm số) bị ghi đè hoặc mất đi.
+   - *Giải pháp:* Thiết kế bảng lịch sử `class_course_history` để lưu snapshot sau khi kết thúc môn học (Mã lớp, Mã môn, Giảng viên, Chuyên cần, Điểm trung bình môn).
+
+3. **Sinh viên học lại và chuyển hệ học:**
+   - *Vấn đề:* Khó kiểm soát lộ trình môn học bắt buộc khi sinh viên chuyển hệ hoặc đăng ký học lại do chương trình học của từng hệ bị cố định cứng.
+   - *Giải pháp:* Thiết kế bảng quy đổi tương đương `course_equivalents` và quản lý lộ trình học thông qua `IndividualStudyPlan` (Chương trình học cá nhân hóa).
+
+4. **Đồng nhất môn học khác ID giữa các khóa (Ví dụ: môn C của K24 và K25):**
+   - *Vấn đề:* Môn C của K24 (ID: 101) và K25 (ID: 202) là hai dòng độc lập trong cơ sở dữ liệu. Khi sinh viên K24 học lại cùng lớp K25, hệ thống cũ không tự động tính điểm thay thế.
+   - *Giải pháp:* Ánh xạ tất cả các môn học tương đương về một mã môn học gốc chung (`base_subject_id`). GPA engine sẽ gom nhóm theo mã gốc để thực hiện thay thế điểm học lại.
 
 ## 2. Sơ đồ cây chức năng chi tiết
 
@@ -65,9 +85,15 @@ mindmap
         Tải tài liệu học tập
       Thông báo tự động
       Quản lý dự án
-        Tích hợp chỉ số AI
+        Bảng Jira-style cho Sinh viên
+        Bảng Jira-style cho Giảng viên
+        Tích hợp chỉ số trễ task của AI
       Cổng dịch vụ 1 cửa
     AI Services - Microservices
+      AI Project Agent
+        Phân rã task tự động
+        Đánh giá tiến độ dự án
+        Gợi ý lịch trình giảng dạy
       AI chấm BTVN / Project
       AI phân tích chỉ số học tập
         RAG
@@ -77,6 +103,7 @@ mindmap
         Giảm tương tác LMS
         Nghỉ học tăng
         Tụt điểm nhanh
+        Trễ task dự án kéo dài
         Dynamic Re-Grouping
       AI Assistant
         Tra cứu hồ sơ
@@ -109,6 +136,7 @@ flowchart LR
   P1 --> P1F["Điểm danh, TKB, quản lý nhóm"]
   P1 --> P1G["Cổng dịch vụ 1 cửa"]
   P1 --> P1H["Thông báo tự động"]
+  P1 --> P1I["Thiết lập DB Schema Quản lý dự án"]
 
   P2 --> P2A["CSSV theo ngày"]
   P2A --> P2A1["Quét điểm danh hàng ngày"]
@@ -122,6 +150,7 @@ flowchart LR
   P2B --> P2B3["Phân nhóm A/B/C/D"]
   P2B --> P2B4["Bàn giao danh sách"]
   P2B --> P2B5["Tạo group Lark/Base"]
+  P2 --> P2C["Triển khai Bảng Kanban/Scrum độc lập"]
 
   P3 --> P3A["AI Microservice"]
   P3A --> P3A1["Kết nối Vector DB"]
@@ -133,6 +162,7 @@ flowchart LR
   P3 --> P3F["AI báo cáo & dự đoán"]
   P3 --> P3G["AI chấm BTVN / Project"]
   P3 --> P3H["AI đánh giá giảng dạy"]
+  P3 --> P3I["Tích hợp AI Project Agent (Sinh việc/Cảnh báo)"]
 ```
 
 ## 4. Sơ đồ luồng CSSV và phân loại nhóm
@@ -207,4 +237,50 @@ flowchart TB
 
   LLM --> TEACHING["AI đánh giá giảng dạy"]
   TEACHING --> TEACHING_OUT["Phân tích chất lượng giảng dạy<br/>Gợi ý cải thiện"]
+
+  LLM --> PM_AGENT["AI Project Agent"]
+  PM_AGENT --> PM_AGENT_OUT["Sinh backlog & subtasks gợi ý<br/>Phát hiện thẻ trễ hạn<br/>Gợi ý lịch trình làm việc thầy cô"]
+```
+
+## 6. Luồng nghiệp vụ Quản lý Dự án (Jira Style)
+
+### Luồng 1: AI tự động phân rã công việc (AI Task Generator)
+```mermaid
+sequenceDiagram
+    actor SV as Sinh viên / Giảng viên
+    participant FE as Web/App Client
+    participant CORE as LMS Core Monolith
+    participant AI as AI Project Agent
+    participant LLM as LLM API
+
+    SV->>FE: Nhập tên đề tài / mục tiêu công việc
+    FE->>CORE: Lưu đề tài & yêu cầu phân rã
+    CORE->>AI: Gửi yêu cầu sinh backlog
+    AI->>LLM: Gửi prompt phân tích đề tài thành subtasks
+    LLM-->>AI: Trả về danh sách tasks chi tiết (To Do, In Progress, Done)
+    AI-->>CORE: Lưu danh sách tasks vào database lõi
+    CORE-->>FE: Hiển thị danh sách task lên bảng Kanban
+    FE-->>SV: Xem & phân vai (Assign) các công việc gợi ý
+```
+
+### Luồng 2: AI theo dõi tiến độ & cảnh báo rủi ro (AI Progress Tracker)
+```mermaid
+sequenceDiagram
+    participant DB as Database lõi
+    participant AI as AI Project Agent
+    participant RISK as AI Risk Score Service
+    participant NOTI as Hệ thống thông báo
+    participant GV as Giảng viên
+
+    loop Quét tự động định kỳ
+        AI->>DB: Quét trạng thái tasks đang thực hiện
+        DB-->>AI: Trả về danh sách tasks trễ hạn (overdue)
+        alt Phát hiện task trễ hạn lâu ngày
+            AI->>RISK: Gửi dữ liệu trễ task (MSSV, Số ngày trễ)
+            RISK->>RISK: Tự động tính toán & tăng Risk Score (+15%)
+            RISK->>DB: Lưu chỉ số rủi ro mới vào hồ sơ sinh viên
+            AI->>NOTI: Kích hoạt thông báo cảnh báo trễ hạn
+            NOTI->>GV: Gửi kịch bản/thư cảnh báo qua Lark/Base cho Giảng viên
+        end
+    end
 ```
