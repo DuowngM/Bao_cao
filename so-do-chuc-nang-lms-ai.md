@@ -91,8 +91,14 @@ mindmap
         Thống kê điểm thi
         Chấm thi coding & trắc nghiệm tự động
         AI hỗ trợ phúc khảo tự động bước 1
-      E-learning
-        Tải tài liệu học tập
+      E-learning (Tùy biến học liệu)
+        4 loại học liệu cốt lõi
+          Video bài giảng
+          Bài đọc tài liệu
+          Slide trình chiếu
+          Trắc nghiệm củng cố
+        Tùy biến học liệu theo môn học
+        Tối ưu băng thông & HLS Streaming
       Thông báo tự động
       Quản lý dự án
         Bảng Jira-style cho Sinh viên

@@ -1358,7 +1358,7 @@
               Sinh viên phải liên hệ nhiều phòng ban khác nhau cho các nhu cầu hành chính, gây đùn đẩy trách nhiệm. Quy trình thi cử, khảo thí và phúc khảo bài thi còn thủ công, tốn nhân lực và chậm trễ trong việc cập nhật điểm.
             </div>
             <div class="solution-content">
-              <strong>✔ Giải pháp hệ thống mới:</strong> Ban hành <strong>Cổng dịch vụ 1 cửa của RE (Rika)</strong>: tự động hóa các nghiệp vụ thay thế nhân sự và định nghĩa vai trò mới (GVCN/Trợ giảng, Cố vấn phụ trách dưới tên chung Rika). Cải tiến thi cử: thi trắc nghiệm & coding tự động, AI hỗ trợ phúc khảo tự động bước 1 và đồng bộ điểm tức thời.
+              <strong>✔ Giải pháp hệ thống mới:</strong> Ban hành <strong>Cổng dịch vụ 1 cửa của RE (One Gate)</strong>: tự động hóa các nghiệp vụ thay thế nhân sự và định nghĩa vai trò mới (GVCN/Trợ giảng, Cố vấn phụ trách dưới tên chung Rika). Cải tiến thi cử: thi trắc nghiệm & coding tự động, AI hỗ trợ phúc khảo tự động bước 1 và đồng bộ điểm tức thời.
             </div>
           </div>
         </div>
@@ -1643,7 +1643,7 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
               <li class="function-item" onclick="showDetailedFunction(this, 'nghiep-vu-lop', 'core')"><span>Nghiệp vụ Lớp học</span> <span>📅</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'quan-ly-du-an', 'core')"><span>Module Quản lý Dự án (PM)</span> <span>🛠️</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'khao-thi', 'core')"><span>Khảo thí tự động (Cải tiến)</span> <span>📊</span></li>
-              <li class="function-item" onclick="showDetailedFunction(this, 'e-learning', 'core')"><span>E-learning (Tài liệu)</span> <span>💾</span></li>
+              <li class="function-item" onclick="showDetailedFunction(this, 'e-learning', 'core')"><span>E-learning & Tùy biến học liệu</span> <span>💾</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'thong-bao', 'core')"><span>Thông báo tự động</span> <span>🔔</span></li>
               <li class="function-item" onclick="showDetailedFunction(this, 'cong-1-cua', 'core')"><span>Cổng dịch vụ 1 cửa (Rika)</span> <span>🚪</span></li>
             </ul>
@@ -2092,12 +2092,13 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
         `
       },
       'e-learning': {
-        title: '💾 Quản lý Học liệu số (E-learning)',
+        title: '💾 Quản lý Học liệu số (E-learning & Customize)',
         desc: `
-          <p><strong>Mục tiêu:</strong> Lưu trữ và phân phối tài liệu, video bài giảng phục vụ học tập tự chủ của sinh viên.</p>
+          <p><strong>Mục tiêu:</strong> Lưu trữ, phân phối và tùy biến linh hoạt các loại tài nguyên học tập theo từng môn học phục vụ sinh viên học tập chủ động.</p>
           <ul>
-            <li><strong>Đa dạng định dạng:</strong> Hỗ trợ PDF, Slide (PPTX), Video (MP4), File nén (ZIP) và các liên kết ngoài.</li>
-            <li><strong>Tối ưu hóa băng thông:</strong> Tích hợp CDN (Content Delivery Network) giúp tải tài liệu nhanh. Video bài giảng được phân giải động (HLS Streaming) tự động chuyển đổi chất lượng 360p/720p/1080p tùy theo tốc độ mạng của người học.</li>
+            <li><strong>4 Loại học liệu cốt lõi:</strong> Hỗ trợ tích hợp và phân phối chuẩn hóa: <strong>Video</strong> (bài giảng trực tuyến phát trực tiếp/streaming), <strong>Bài đọc</strong> (tài liệu PDF, giáo trình, bài báo khoa học), <strong>Slide</strong> (bài trình chiếu bài giảng bài bản), và <strong>Trắc nghiệm</strong> (bài kiểm tra tự động củng cố kiến thức sau mỗi bài học).</li>
+            <li><strong>Customize theo từng môn học:</strong> Cho phép cấu hình linh hoạt cấu trúc học liệu tùy theo đặc thù môn học. Ví dụ: môn Công nghệ thông tin sẽ ưu tiên tích hợp Video + Trắc nghiệm code tự động; môn Luật/Xã hội học ưu tiên Bài đọc chuyên sâu + Slide hệ thống hóa kiến thức.</li>
+            <li><strong>Tối ưu hóa băng thông & Streaming:</strong> Tích hợp mạng phân phối nội dung (CDN) và cơ chế HTTP Live Streaming (HLS) giúp tự động điều chỉnh độ phân giải video (360p/720p/1080p) theo băng thông mạng của sinh viên.</li>
           </ul>
         `
       },
