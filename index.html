@@ -2118,6 +2118,375 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
     </section>
 
     </div>
+
+    <!-- ==========================================
+         STUDENT JOURNEY SIMULATOR MAIN CONTENT
+         ========================================== -->
+    <div id="student-simulator-wrapper" style="display: none; flex-direction: column; gap: 3rem; width: 100%;">
+      
+      <!-- Tab 1: Thông tin & Bảng xếp hạng -->
+      <div id="tab-info" class="sim-tab-content active">
+        <div class="section-header">
+          <span class="section-badge">Thông tin</span>
+          <h2 class="section-title">Bảng Xếp Hạng Năng Lực Học Tập</h2>
+          <p class="section-desc">Theo dõi thứ hạng học tập toàn diện dựa trên điểm số chuyên môn và ý thức học tập (R-point/XP).</p>
+        </div>
+        <div class="card" style="margin-bottom: 2rem;">
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div>
+              <label class="label" style="display:block; margin-bottom:0.35rem; font-size:0.8rem; text-transform:uppercase;">Hệ Đào Tạo</label>
+              <select id="leaderboard-program" onchange="filterLeaderboard()" class="mock-input" style="background:#111827; color:#fff; border:1px solid var(--border-color); padding:0.5rem 1rem; border-radius:6px; font-family:'Outfit', sans-serif;">
+                <option value="all">Tất cả hệ học</option>
+                <option value="clc">Chất lượng cao</option>
+                <option value="chuan">Hệ chuẩn (Đại trà)</option>
+              </select>
+            </div>
+            <div>
+              <label class="label" style="display:block; margin-bottom:0.35rem; font-size:0.8rem; text-transform:uppercase;">Khóa học</label>
+              <select id="leaderboard-cohort" onchange="filterLeaderboard()" class="mock-input" style="background:#111827; color:#fff; border:1px solid var(--border-color); padding:0.5rem 1rem; border-radius:6px; font-family:'Outfit', sans-serif;">
+                <option value="all">Tất cả các khóa</option>
+                <option value="k24">Khóa K24</option>
+                <option value="k25">Khóa K25</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="overflow-x: auto;">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Hạng</th>
+                  <th>Mã Sinh Viên</th>
+                  <th>Họ và Tên</th>
+                  <th>Lớp</th>
+                  <th>Hệ học</th>
+                  <th>Tích lũy XP</th>
+                  <th>Cấp độ (Level)</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-tbody">
+                <!-- Dynamically populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 3rem;">
+          <h3 class="section-title" style="font-size: 1.5rem;">🔔 Thông Báo Đào Tạo Từ Hệ Thống</h3>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+          <div class="card" style="border-left: 4px solid var(--primary); padding: 1.5rem;">
+            <span class="label" style="color:var(--primary);">Hệ thống đào tạo</span>
+            <h4 style="margin: 0.5rem 0; font-size:1.1rem; color:#fff;">Lịch đăng ký môn học học kỳ phụ sắp mở</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45;">Bắt đầu đăng ký học phần tương đương từ ngày 25/06/2026. Sinh viên chú ý cập nhật IndividualStudyPlan.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--secondary); padding: 1.5rem;">
+            <span class="label" style="color:var(--secondary);">Khóa học Web nâng cao</span>
+            <h4 style="margin: 0.5rem 0; font-size:1.1rem; color:#fff;">AI Project Agent đã cập nhật Sprints đầu bài</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45;">Hãy truy cập mục Quản lý Dự án để nhận danh sách công việc chi tiết được AI phân rã cho Đồ án nhóm của bạn.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Trang chủ & Lộ trình -->
+      <div id="tab-dashboard" class="sim-tab-content">
+        <div class="section-header">
+          <span class="section-badge">Trang chủ</span>
+          <h2 class="section-title">Dashboard Sinh Viên</h2>
+          <p class="section-desc">Giao diện tổng hợp công việc cần làm hôm nay, tiến độ lộ trình học tập và trạng thái Streak.</p>
+        </div>
+
+        <div class="overview-grid" style="grid-template-columns: 1.8fr 1.2fr; gap: 2rem;">
+          <!-- Left: Today Tasks & Roadmap -->
+          <div style="display:flex; flex-direction:column; gap:2rem;">
+            <div class="card">
+              <h3 style="font-size: 1.2rem; margin-bottom: 1.25rem; color: var(--primary); font-weight:600;">✅ Công việc cần làm hôm nay</h3>
+              <div style="display:flex; flex-direction:column; gap:0.85rem;">
+                <label style="display:flex; align-items:center; gap:0.75rem; font-size:0.95rem; cursor:pointer; color: var(--text-muted);">
+                  <input type="checkbox" checked disabled> <span style="text-decoration:line-through;">Xem Video bài giảng: Buổi 5 - Thiết kế RDB và chuẩn hóa DB</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:0.75rem; font-size:0.95rem; cursor:pointer;">
+                  <input type="checkbox" onchange="toggleTaskCheck(this)"> <span style="color:#fff;">Làm 5 câu trắc nghiệm kiểm chứng lý thuyết SQL Joins</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:0.75rem; font-size:0.95rem; cursor:pointer;">
+                  <input type="checkbox" onchange="toggleTaskCheck(this)"> <span style="color:#fff;">Nộp báo cáo Sprint 1 Đồ án đăng ký môn học lên Kanban</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="font-size: 1.2rem; margin-bottom: 1.25rem; color: var(--secondary); font-weight:600;">🗺️ Lộ trình đào tạo cá nhân hóa (Roadmap)</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 1.5rem;">Lộ trình được tự động thiết kế dựa trên năng lực và nhu cầu tuyển dụng Fullstack Web Developer:</p>
+              <div style="display:flex; flex-direction:column; gap:1.5rem; position:relative; padding-left:1.5rem; border-left: 2px solid var(--border-color);">
+                <div style="position:relative;">
+                  <span style="position:absolute; left:-2.1rem; top:0.2rem; width:12px; height:12px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+                  <h4 style="font-size:0.95rem; color:#fff; font-weight:600;">Giai đoạn 1: HTML5, CSS3 & Javascript cơ bản</h4>
+                  <p style="font-size:0.8rem; color:#10b981; margin-top:0.25rem;">✔ Đã hoàn thành - 100%</p>
+                </div>
+                <div style="position:relative;">
+                  <span style="position:absolute; left:-2.1rem; top:0.2rem; width:12px; height:12px; border-radius:50%; background:var(--primary); box-shadow:0 0 8px var(--primary);"></span>
+                  <h4 style="font-size:0.95rem; color:#fff; font-weight:600;">Giai đoạn 2: Cơ sở dữ liệu quan hệ SQL & API với ExpressJS</h4>
+                  <p style="font-size:0.8rem; color:var(--primary); margin-top:0.25rem;">⏳ Đang học - Đạt 65% tiến trình</p>
+                </div>
+                <div style="position:relative;">
+                  <span style="position:absolute; left:-2.1rem; top:0.2rem; width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.2);"></span>
+                  <h4 style="font-size:0.95rem; color:var(--text-muted); font-weight:600;">Giai đoạn 3: Framework React & Next.js nâng cao</h4>
+                  <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">🔒 Chưa mở khóa (Dự kiến mở vào học kỳ tới)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Student Stats & Streak -->
+          <div style="display:flex; flex-direction:column; gap:2rem;">
+            <div class="card" style="text-align:center; padding: 2rem 1.5rem;">
+              <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--secondary-glow); border: 2px solid var(--secondary); display:flex; align-items:center; justify-content:center; font-size:2.2rem; margin: 0 auto 1rem auto;">👨‍💻</div>
+              <h3 style="font-size: 1.3rem; font-weight:600; color:#fff;">Nguyễn Văn A</h3>
+              <p style="font-size: 0.85rem; color:var(--text-muted);">Lớp: D21HTTT01 - Hệ Chất lượng cao</p>
+              <div style="display:flex; justify-content:space-around; margin-top:1.5rem; border-top:1px solid var(--border-color); padding-top:1.25rem;">
+                <div>
+                  <span style="font-size: 1.5rem; font-weight:700; color:var(--primary); display:block;">8,450</span>
+                  <span style="display:block; font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; margin-top:0.25rem;">Tổng XP</span>
+                </div>
+                <div>
+                  <span style="font-size: 1.5rem; font-weight:700; color:var(--secondary); display:block;">Level 14</span>
+                  <span style="display:block; font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; margin-top:0.25rem;">Cấp độ</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="text-align:center; border: 1px solid rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.03); padding: 2rem 1.5rem;">
+              <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">🔥</div>
+              <h3 style="font-size: 1.25rem; color: #fbbf24; font-weight:600;">Streak Học Tập: <span id="streak-count">5</span> Ngày Liên Tiếp</h3>
+              <p style="font-size: 0.85rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.45;">Duy trì học tập hàng ngày để nhân hệ số XP và nhận badge đặc biệt.</p>
+              <button class="ai-pm-btn" style="background:#fbbf24; color:#000; width:100%; font-weight:600;" id="btn-streak-checkin" onclick="triggerStreakCheckin()">🔥 Điểm danh học tập hôm nay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Học tập & AI Rika -->
+      <div id="tab-learning" class="sim-tab-content">
+        <div class="section-header">
+          <span class="section-badge">Học tập</span>
+          <h2 class="section-title">Học tập Cá nhân hóa & Trợ lý ảo Rika</h2>
+          <p class="section-desc">Học tập theo Session/Lesson thiết kế riêng và trao đổi hỏi đáp 24/7 với AI Assistant.</p>
+        </div>
+
+        <div class="overview-grid" style="grid-template-columns: 1fr 1.2fr; gap: 2rem;">
+          <!-- Left: Course Lessons -->
+          <div class="card" style="display:flex; flex-direction:column; gap:1.25rem;">
+            <h3 style="font-size: 1.2rem; color:#fff; font-weight:600;">📖 Giáo trình: Thiết kế Web nâng cao</h3>
+            <div style="display:flex; flex-direction:column; gap:0.85rem;">
+              <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:8px;">
+                <h4 style="font-size:0.95rem; margin-bottom:0.35rem; color:#fff; font-weight:600;">Lesson 5.1: Video giảng dạy SQL Joins</h4>
+                <span style="font-size:0.75rem; color:#10b981; font-weight:500;">✔ Đã xem (12 phút)</span>
+              </div>
+              <div style="padding:1rem; background:rgba(56,189,248,0.05); border:1px solid var(--primary); border-radius:8px;">
+                <h4 style="font-size:0.95rem; margin-bottom:0.35rem; color:var(--primary); font-weight:600;">Lesson 5.2: Bài thực hành viết Query phức hợp</h4>
+                <span style="font-size:0.75rem; color:var(--primary); font-weight:500;">⏳ Đang học - Yêu cầu chạy testcases</span>
+              </div>
+              <div style="padding:1rem; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); border-radius:8px; opacity:0.5;">
+                <h4 style="font-size:0.95rem; margin-bottom:0.35rem; color:var(--text-muted);">Lesson 5.3: Quiz củng cố kiến thức môn học</h4>
+                <span style="font-size:0.75rem; color:var(--text-muted);">🔒 Chưa mở khóa (Xem xong video)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: AI Chat Rika -->
+          <div class="chat-container">
+            <div style="padding: 1rem 1.25rem; background: rgba(0,0,0,0.25); border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:10px; height:10px; background:#10b981; border-radius:50%;"></div>
+                <strong style="color:var(--secondary); font-size:0.95rem;">🤖 Trợ lý học tập Rika (AI)</strong>
+              </div>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Hỏi đáp RAG & VectorDB</span>
+            </div>
+
+            <div class="chat-messages" id="rika-chat-messages">
+              <div class="chat-msg rika">
+                Xin chào! Mình là <strong>Rika</strong>. Mình đã nắm được tài liệu và slide của môn học <strong>Thiết kế Web nâng cao</strong> của lớp bạn. Bạn có điều gì cần mình hỗ trợ giải đáp không?
+              </div>
+            </div>
+
+            <div class="chat-suggestions">
+              <button class="chat-suggest-btn" onclick="sendRikaSample('sql_join')">💡 Giải thích SQL Outer Join dễ hiểu hơn</button>
+              <button class="chat-suggest-btn" onclick="sendRikaSample('code_debug')">💡 Gợi ý sửa lỗi code Express Server</button>
+              <button class="chat-suggest-btn" onclick="sendRikaSample('summary')">💡 Tóm tắt bài học SQL tuần này</button>
+              <button class="chat-suggest-btn" onclick="sendRikaSample('practice')">💡 Sinh câu hỏi trắc nghiệm tự luyện</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Động lực học tập -->
+      <div id="tab-motivation" class="sim-tab-content">
+        <div class="section-header">
+          <span class="section-badge purple">Động lực</span>
+          <h2 class="section-title">Hệ Thống Gamification & Các Cuộc Thi</h2>
+          <p class="section-desc">Tạo động lực học tập thông qua nhiệm vụ hàng ngày, huy hiệu đặc biệt và các cuộc thi học thuật.</p>
+        </div>
+
+        <div class="overview-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <!-- Missions list -->
+          <div class="card" style="display:flex; flex-direction:column; gap:1.25rem;">
+            <h3 style="font-size:1.2rem; color:var(--secondary); font-weight:600;">⚡ Nhiệm vụ tuần này</h3>
+            <div style="display:flex; flex-direction:column; gap:1.25rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+                <div>
+                  <h4 style="font-size:0.95rem; color:#fff; font-weight:600; margin-bottom:0.25rem;">Chăm chỉ học tập</h4>
+                  <p style="font-size:0.75rem; color:var(--text-muted);">Xem trọn vẹn 3 video bài giảng mới</p>
+                </div>
+                <span style="font-size:0.85rem; color:#10b981; font-weight:600;">+250 XP</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+                <div>
+                  <h4 style="font-size:0.95rem; color:#fff; font-weight:600; margin-bottom:0.25rem;">Chúa tể Query</h4>
+                  <p style="font-size:0.75rem; color:var(--text-muted);">Hoàn thành 1 bài tập SQL Join không lỗi</p>
+                </div>
+                <span style="font-size:0.85rem; color:#10b981; font-weight:600;">+500 XP</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <h4 style="font-size:0.95rem; color:#fff; font-weight:600; margin-bottom:0.25rem;">Nhà nghiên cứu thông thái</h4>
+                  <p style="font-size:0.75rem; color:var(--text-muted);">Đặt 2 câu hỏi học vụ cho trợ lý AI Rika</p>
+                </div>
+                <span style="font-size:0.85rem; color:#10b981; font-weight:600;">+100 XP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Badges box -->
+          <div class="card" style="display:flex; flex-direction:column; gap:1.25rem;">
+            <h3 style="font-size:1.2rem; color:var(--primary); font-weight:600;">🏅 Huy hiệu của tôi</h3>
+            <div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; padding: 1.5rem 0;">
+              <div style="text-align:center; width:80px;">
+                <div style="font-size:2.5rem; background:rgba(52,211,153,0.1); border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; margin:0 auto 0.5rem auto;">🚀</div>
+                <span style="font-size:0.75rem; display:block; font-weight:500; color:#fff;">Tân Binh</span>
+              </div>
+              <div style="text-align:center; width:80px;">
+                <div style="font-size:2.5rem; background:rgba(56,189,248,0.1); border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; margin:0 auto 0.5rem auto;">🎯</div>
+                <span style="font-size:0.75rem; display:block; font-weight:500; color:#fff;">Chuyên Cần</span>
+              </div>
+              <div style="text-align:center; width:80px;">
+                <div style="font-size:2.5rem; background:rgba(251,191,36,0.1); border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; margin:0 auto 0.5rem auto;">🏆</div>
+                <span style="font-size:0.75rem; display:block; font-weight:500; color:#fff;">Thủ Khoa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Hành chính Một cửa -->
+      <div id="tab-admin" class="sim-tab-content">
+        <div class="section-header">
+          <span class="section-badge">Hành chính</span>
+          <h2 class="section-title">Trung Tâm Hành Chính 1 Cửa Rika</h2>
+          <p class="section-desc">Gửi các yêu cầu hành chính trực tuyến và theo dõi tiến độ phê duyệt tự động của trợ lý Rika.</p>
+        </div>
+
+        <div class="overview-grid" style="grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+          <!-- Left: Request form -->
+          <div class="card" style="display:flex; flex-direction:column; gap:1.25rem;">
+            <h3 style="font-size:1.2rem; color:#fff; font-weight:600;">✍️ Tạo đơn yêu cầu mới</h3>
+            <form id="one-gate-form" onsubmit="submitOneGateRequest(event)" style="display:flex; flex-direction:column; gap:1.25rem;">
+              <div>
+                <label class="label" style="display:block; margin-bottom:0.5rem; font-size:0.8rem; text-transform:uppercase;">Loại Đơn Yêu Cầu</label>
+                <select id="req-type" class="mock-input" style="width:100%; background:#111827; color:#fff; border:1px solid var(--border-color); padding:0.65rem 1rem; border-radius:8px; font-family:'Outfit', sans-serif;">
+                  <option value="Đơn xin nghỉ học tạm thời">Đơn xin nghỉ học tạm thời (Có phép)</option>
+                  <option value="Đơn xin gia hạn nộp bài tập">Đơn xin gia hạn nộp bài tập đồ án</option>
+                  <option value="Đơn xin phúc khảo điểm thi">Đơn xin phúc khảo điểm kiểm tra</option>
+                  <option value="Đơn xin hoãn nộp học phí">Đơn xin hoãn nộp học phí học kỳ</option>
+                </select>
+              </div>
+              <div>
+                <label class="label" style="display:block; margin-bottom:0.5rem; font-size:0.8rem; text-transform:uppercase;">Lý do chi tiết</label>
+                <textarea id="req-reason" required placeholder="Nhập lý do chi tiết..." class="mock-input" style="width:100%; height:120px; background:#111827; color:#fff; border:1px solid var(--border-color); padding:0.75rem 1rem; border-radius:8px; font-family:'Outfit', sans-serif; resize:none; line-height:1.45;"></textarea>
+              </div>
+              <button type="submit" class="ai-pm-btn" style="width:100%; font-weight:600;">🚀 Gửi đơn lên hệ thống</button>
+            </form>
+          </div>
+
+          <!-- Right: Request History -->
+          <div class="card" style="display:flex; flex-direction:column; gap:1rem;">
+            <h3 style="font-size:1.2rem; color:#fff; font-weight:600;">📜 Lịch sử xử lý đơn từ</h3>
+            <div style="overflow-x:auto;">
+              <table class="leaderboard-table" style="font-size:0.85rem;">
+                <thead>
+                  <tr>
+                    <th>Mã đơn</th>
+                    <th>Loại đơn</th>
+                    <th>Người phụ trách</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
+                  </tr>
+                </thead>
+                <tbody id="one-gate-history-tbody">
+                  <tr>
+                    <td><code>REQ-0021</code></td>
+                    <td>Đơn xin nghỉ học có phép</td>
+                    <td>🤖 Rika (Cố vấn)</td>
+                    <td><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:0.15rem 0.5rem; border-radius:4px; font-weight:600; font-size:0.75rem;">Đã duyệt</span></td>
+                    <td>18/06/2026</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 6: Portfolio cá nhân -->
+      <div id="tab-portfolio" class="sim-tab-content">
+        <div class="section-header">
+          <span class="section-badge success">Portfolio</span>
+          <h2 class="section-title">Hồ Sơ Năng Lực Học Viên (Portfolio Tự Động)</h2>
+          <p class="section-desc">Portfolio tự động đồng bộ hóa thông tin dự án môn học, kỹ năng cốt lõi và đánh giá của giảng viên.</p>
+        </div>
+
+        <div class="card" style="display:flex; flex-direction:column; gap:2rem; padding: 2rem;">
+          <div style="display:flex; align-items:center; gap:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1.5rem; flex-wrap:wrap;">
+            <div style="width:70px; height:70px; border-radius:50%; background:var(--primary-glow); border:2px solid var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.8rem;">👨‍🎓</div>
+            <div>
+              <h3 style="font-size:1.4rem; color:#fff; font-weight:600;">Nguyễn Văn A</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">Lớp D21HTTT01 • Chuyên ngành Hệ thống thông tin quản lý</p>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; @media(max-width:768px){grid-template-columns:1fr;}">
+            <!-- Left: Projects -->
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+              <h4 style="font-size:1.1rem; color:var(--primary); font-weight:600; margin-bottom:0.25rem;">📂 Các dự án đồ án thực hành</h4>
+              <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); padding:1.25rem; border-radius:8px;">
+                <h5 style="font-size:0.95rem; color:#fff; font-weight:600; margin-bottom:0.35rem;">Hệ thống đăng ký môn học trực tuyến</h5>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem; line-height:1.45;">ExpressJS, PostgreSQL, ReactJS. Tích hợp AI Project Agent phân rã task nhóm.</p>
+                <a href="https://github.com/nguyen-van-a/lms-enrollment-demo" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:0.25rem;">🔗 Github Project Link</a>
+              </div>
+            </div>
+
+            <!-- Right: Skills & Comments -->
+            <div style="display:flex; flex-direction:column; gap:1.5rem;">
+              <div>
+                <h4 style="font-size:1.1rem; color:var(--secondary); font-weight:600; margin-bottom:0.75rem;">⚡ Kỹ năng đã tích lũy</h4>
+                <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+                  <span style="background:var(--primary-glow); color:var(--primary); border:1px solid rgba(56, 189, 248, 0.2); padding:0.3rem 0.65rem; border-radius:4px; font-size:0.8rem; font-weight:500;">SQL Query</span>
+                  <span style="background:var(--primary-glow); color:var(--primary); border:1px solid rgba(56, 189, 248, 0.2); padding:0.3rem 0.65rem; border-radius:4px; font-size:0.8rem; font-weight:500;">NodeJS / Express</span>
+                  <span style="background:var(--primary-glow); color:var(--primary); border:1px solid rgba(56, 189, 248, 0.2); padding:0.3rem 0.65rem; border-radius:4px; font-size:0.8rem; font-weight:500;">UI/UX Design</span>
+                </div>
+              </div>
+
+              <div style="border-top:1px solid var(--border-color); padding-top:1.25rem;">
+                <h4 style="font-size:1.1rem; color:#10b981; font-weight:600; margin-bottom:0.5rem;">💬 Đánh giá từ giảng viên</h4>
+                <blockquote style="font-style:italic; font-size:0.85rem; color:var(--text-muted); padding-left:0.75rem; border-left:2px solid #10b981; line-height:1.55;">
+                  "Sinh viên A có khả năng tự học tốt, tiếp thu nhanh các buổi lý thuyết SQL và tương tác tích cực với trợ lý học vụ AI Rika để tự phát triển kỹ năng coding." - TS. Nguyễn Văn B (Giảng viên Web nâng cao)
+                </blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </main>
 
   <script>
