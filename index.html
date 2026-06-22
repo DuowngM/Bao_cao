@@ -1203,6 +1203,193 @@
         grid-template-columns: 1fr;
       }
     }
+
+  /* ==========================================
+     DUAL-MODE & STUDENT SIMULATOR STYLING 
+     ========================================== */
+
+  /* Dual-mode visibility controllers */
+  body.mode-tech #tech-content-wrapper,
+  body.mode-tech aside #tech-sidebar-menu {
+    display: flex !important;
+  }
+  body.mode-tech #student-simulator-wrapper,
+  body.mode-tech aside #student-sidebar-menu {
+    display: none !important;
+  }
+  body.mode-student #tech-content-wrapper,
+  body.mode-student aside #tech-sidebar-menu {
+    display: none !important;
+  }
+  body.mode-student #student-simulator-wrapper,
+  body.mode-student aside #student-sidebar-menu {
+    display: flex !important;
+  }
+
+  /* Global Mode Toggle Switch Styles */
+  .global-header {
+    width: calc(100% - var(--toc-width));
+    margin-left: var(--toc-width);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 70px;
+    background: rgba(9, 13, 22, 0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3rem;
+    z-index: 99;
+  }
+  @media (max-width: 1024px) {
+    .global-header {
+      width: 100%;
+      margin-left: 0;
+      padding: 0 1.5rem;
+    }
+    main {
+      margin-top: 70px !important;
+    }
+  }
+  main {
+    margin-top: 70px;
+  }
+  .mode-switch-wrapper {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    padding: 4px;
+  }
+  .mode-switch-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 0.85rem;
+  }
+  .mode-switch-btn.active {
+    background: var(--primary);
+    color: var(--bg-dark);
+    box-shadow: 0 0 12px var(--primary-glow);
+  }
+  .mode-switch-btn.active.student-color {
+    background: var(--secondary);
+    color: var(--bg-dark);
+    box-shadow: 0 0 12px var(--secondary-glow);
+  }
+
+  /* Simulator-specific styles */
+  .sim-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .sim-tab-content {
+    display: none;
+  }
+  .sim-tab-content.active {
+    display: block;
+  }
+  /* Leaderboard Styling */
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    text-align: left;
+  }
+  .leaderboard-table th, .leaderboard-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .leaderboard-table th {
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .leaderboard-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .rank-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+  }
+  .rank-1 { background: #f59e0b; color: #fff; }
+  .rank-2 { background: #cbd5e1; color: #0f172a; }
+  .rank-3 { background: #b45309; color: #fff; }
+
+  /* Chatbox Styling */
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 480px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .chat-messages {
+    flex-grow: 1;
+    padding: 1.25rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .chat-msg {
+    max-width: 80%;
+    padding: 0.85rem 1.1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .chat-msg.student {
+    align-self: flex-end;
+    background: var(--primary-glow);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--text-main);
+  }
+  .chat-msg.rika {
+    align-self: flex-start;
+    background: var(--secondary-glow);
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    color: var(--text-main);
+  }
+  .chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.15);
+    border-top: 1px solid var(--border-color);
+  }
+  .chat-suggest-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .chat-suggest-btn:hover {
+    background: var(--secondary-glow);
+    border-color: var(--secondary);
+    color: var(--text-main);
+  }
   </style>
 </head>
 <body>
@@ -1458,7 +1645,7 @@
               <rect x="550" y="335" width="180" height="55" />
               <text x="640" y="357" dominant-baseline="middle" text-anchor="middle" class="title" style="fill: var(--secondary); font-size: 13px">Vector Database</text>
               <text x="640" y="375" dominant-baseline="middle" text-anchor="middle" class="subtitle">Embedding & Tri thức AI</text>
-            </g>
+            </g> 
           </svg>
         </div>
 
