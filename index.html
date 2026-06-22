@@ -1390,6 +1390,58 @@
     border-color: var(--secondary);
     color: var(--text-main);
   }
+
+  /* Timetable styling */
+  .timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 600px;
+    margin-top: 0.5rem;
+  }
+  .timetable-table th, .timetable-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .timetable-table th {
+    background: rgba(255,255,255,0.02);
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+  .timetable-slot {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .timetable-slot:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .slot-primary {
+    background: rgba(56,189,248,0.07);
+    border: 1px solid rgba(56,189,248,0.2);
+    color: var(--primary);
+  }
+  .slot-secondary {
+    background: rgba(168,85,247,0.07);
+    border: 1px solid rgba(168,85,247,0.2);
+    color: var(--secondary);
+  }
+  .slot-success {
+    background: rgba(16,185,129,0.07);
+    border: 1px solid rgba(16,185,129,0.2);
+    color: #10b981;
+  }
+  .slot-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.8rem;
+    padding-left: 0.5rem;
+  }
   </style>
 </head>
 <body>
@@ -2261,6 +2313,84 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
               <p style="font-size: 0.85rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.45;">Duy trì học tập hàng ngày để nhân hệ số XP và nhận badge đặc biệt.</p>
               <button class="ai-pm-btn" style="background:#fbbf24; color:#000; width:100%; font-weight:600;" id="btn-streak-checkin" onclick="triggerStreakCheckin()">🔥 Điểm danh học tập hôm nay</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Weekly Timetable (Thời khóa biểu) -->
+        <div class="card" style="margin-top: 2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.75rem;">
+            <h3 style="font-size:1.25rem; color:#fff; font-weight:600; display:flex; align-items:center; gap:0.5rem; margin:0;">
+              📅 Thời Khóa Biểu Tuần Này
+            </h3>
+            <span style="font-size:0.8rem; color:var(--primary); background:rgba(56,189,248,0.1); padding:0.25rem 0.6rem; border-radius:4px; border:1px solid rgba(56,189,248,0.2);">
+              Học kỳ I - Năm học 2026-2027
+            </span>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="timetable-table">
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Thứ Hai</th>
+                  <th>Thứ Ba</th>
+                  <th>Thứ Tư</th>
+                  <th>Thứ Năm</th>
+                  <th>Thứ Sáu</th>
+                  <th>Thứ Bảy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600; color:#fff; font-size:0.85rem; min-width:110px;">Ca Sáng<br/><span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">07:30 - 11:30</span></td>
+                  <td>
+                    <div class="timetable-slot slot-primary">
+                      <strong>Cơ sở dữ liệu SQL</strong><br/>
+                      <span style="font-size:0.75rem; opacity:0.8;">Phòng A.203 - GV. Nguyễn Văn B</span>
+                    </div>
+                  </td>
+                  <td><span class="slot-empty">Không có tiết</span></td>
+                  <td>
+                    <div class="timetable-slot slot-primary">
+                      <strong>Cơ sở dữ liệu SQL</strong><br/>
+                      <span style="font-size:0.75rem; opacity:0.8;">Phòng A.203 - GV. Nguyễn Văn B</span>
+                    </div>
+                  </td>
+                  <td><span class="slot-empty">Không có tiết</span></td>
+                  <td>
+                    <div class="timetable-slot slot-secondary">
+                      <strong>Anh văn chuyên ngành</strong><br/>
+                      <span style="font-size:0.75rem; opacity:0.8;">Phòng B.401 - GV. Trần Thị C</span>
+                    </div>
+                  </td>
+                  <td><span class="slot-empty">Không có tiết</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color:#fff; font-size:0.85rem; min-width:110px;">Ca Chiều<br/><span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">13:30 - 17:30</span></td>
+                  <td><span class="slot-empty">Không có tiết</span></td>
+                  <td>
+                    <div class="timetable-slot slot-success">
+                      <strong>Lập trình Web nâng cao</strong><br/>
+                      <span style="font-size:0.75rem; opacity:0.8;">Phòng Lab 3 - GV. Phạm Minh D</span>
+                    </div>
+                  </td>
+                  <td><span class="slot-empty">Không có tiết</span></td>
+                  <td>
+                    <div class="timetable-slot slot-success">
+                      <strong>Lập trình Web nâng cao</strong><br/>
+                      <span style="font-size:0.75rem; opacity:0.8;">Phòng Lab 3 - GV. Phạm Minh D</span>
+                    </div>
+                  </td>
+                  <td><span class="slot-empty">Không có tiết</span></td>
+                  <td>
+                    <div class="timetable-slot slot-primary">
+                      <strong>Kỹ năng làm việc nhóm</strong><br/>
+                      <span style="font-size:0.75rem; opacity:0.8;">Hội trường - GV. Lê Hoàng N</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
