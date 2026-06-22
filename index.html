@@ -3213,6 +3213,114 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
 
       renderLeaderboard(reranked);
     }
+
+    // ========================================================
+    // PERSONALIZED LEARNING, STREAKS & AI CHATBOT RIKA
+    // ========================================================
+    let streakCheckinDone = false;
+
+    function triggerStreakCheckin() {
+      if (streakCheckinDone) {
+        alert('Bạn đã điểm danh hôm nay rồi!');
+        return;
+      }
+      streakCheckinDone = true;
+      const streakCountSpan = document.getElementById('streak-count');
+      let currentStreak = parseInt(streakCountSpan.innerText);
+      currentStreak += 1;
+      streakCountSpan.innerText = currentStreak;
+
+      // Trigger visual style success updates
+      const checkinBtn = document.getElementById('btn-streak-checkin');
+      checkinBtn.innerText = '🔥 Đã điểm danh hôm nay!';
+      checkinBtn.style.background = 'var(--success)';
+      checkinBtn.style.color = '#fff';
+      checkinBtn.disabled = true;
+
+      alert('Điểm danh thành công! Bạn nhận được +100 XP thưởng.');
+    }
+
+    function toggleTaskCheck(checkbox) {
+      if (checkbox.checked) {
+        alert('Tuyệt vời! Hoàn thành công việc nhận thêm +50 XP.');
+      }
+    }
+
+    const rikaScripts = {
+      'sql_join': ` Outer Join (Liên kết ngoài) dùng để truy vấn dữ liệu khi có bản ghi ở bảng này nhưng không nhất thiết phải khớp ở bảng kia.
+Có 2 loại chính:
+1. **Left Outer Join**: Lấy toàn bộ hàng ở bảng bên trái (Left), nếu bảng bên phải không khớp thì điền null.
+2. **Right Outer Join**: Lấy toàn bộ hàng ở bảng bên phải (Right), nếu bảng bên trái không khớp thì điền null.
+
+*Ví dụ SQL:*
+\`\`\`sql
+SELECT SinhVien.HoTen, DiemThi.MonC
+FROM SinhVien
+LEFT JOIN DiemThi ON SinhVien.MSSV = DiemThi.MSSV;
+\`\`\`
+*(Nếu sinh viên chưa thi, điểm sẽ tự động trả về NULL)*`,
+      
+      'code_debug': ` Dựa trên phân tích, file **server.js** của bạn lỗi do thiếu middleware xử lý JSON. Hãy thêm dòng:
+\`\`\`javascript
+app.use(express.json());
+\`\`\`
+trước khi định nghĩa các API Endpoints nhé. Điều này giúp tránh lỗi request body trả về undefined.`,
+      
+      'summary': ` Tóm tắt bài học SQL Tuần này:
+- Hiểu cấu trúc lập bảng (Create Table) và các ràng buộc dữ liệu (Primary Key, Foreign Key).
+- Hiểu sâu các lệnh JOIN: INNER JOIN (Lấy phần giao), LEFT/RIGHT JOIN (Outer joins).
+- Làm quen với các hàm tổng hợp (Aggregate functions): SUM, AVG, COUNT, GROUP BY.`,
+      
+      'practice': ` Dưới đây là câu hỏi ôn tập nhanh cho bạn:
+**Câu hỏi:** Phân biệt kết quả giữa INNER JOIN và LEFT JOIN trong SQL?
+A) INNER JOIN lấy tất cả bản ghi của bảng trái, LEFT JOIN chỉ lấy phần giao.
+B) INNER JOIN chỉ lấy phần giao dữ liệu, LEFT JOIN lấy tất cả dữ liệu bảng trái bao gồm cả phần không khớp.
+C) Cả hai đều cho kết quả giống nhau.
+
+*Nhập đáp án bạn chọn vào khung chat để kiểm tra nhé!*`
+    };
+
+    function sendRikaSample(key) {
+      const chatMessages = document.getElementById('rika-chat-messages');
+      if (!chatMessages) return;
+
+      const requestText = {
+        'sql_join': 'Giải thích Outer Join dễ hiểu hơn',
+        'code_debug': 'Xem gợi ý sửa lỗi code Express Server',
+        'summary': 'Tóm tắt bài học SQL tuần này',
+        'practice': 'Sinh câu hỏi trắc nghiệm tự luyện'
+      }[key];
+
+      // Append Student Message
+      const studentMsg = document.createElement('div');
+      studentMsg.className = 'chat-msg student';
+      studentMsg.innerText = requestText;
+      chatMessages.appendChild(studentMsg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Setup Rika Typing simulation
+      setTimeout(() => {
+        const rikaMsg = document.createElement('div');
+        rikaMsg.className = 'chat-msg rika';
+        rikaMsg.innerHTML = '<strong>Rika đang soạn câu trả lời...</strong>';
+        chatMessages.appendChild(rikaMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        let responseText = rikaScripts[key];
+        let charIndex = 0;
+        rikaMsg.innerHTML = '🤖 '; // clear typing placeholder
+
+        const typingTimer = setInterval(() => {
+          if (charIndex < responseText.length) {
+            rikaMsg.innerHTML += responseText.charAt(charIndex);
+            charIndex++;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          } else {
+            clearInterval(typingTimer);
+          }
+        }, 8); // Speed of character typing
+      }, 800);
+    }
   </script>
 </body>
 </html>
