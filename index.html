@@ -2490,6 +2490,65 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
   </main>
 
   <script>
+    // Global Mode Switching Logic (Tech vs Student)
+    function switchMode(mode) {
+      const body = document.body;
+      const techBtn = document.getElementById('btn-mode-tech');
+      const studentBtn = document.getElementById('btn-mode-student');
+      const asideSubtitle = document.getElementById('aside-subtitle');
+      const asideFooterVer = document.getElementById('aside-footer-ver');
+
+      if (mode === 'tech') {
+        body.classList.remove('mode-student');
+        body.classList.add('mode-tech');
+        techBtn.classList.add('active');
+        studentBtn.classList.remove('active');
+        
+        asideSubtitle.innerText = 'Kế Hoạch Triển Khai';
+        asideFooterVer.innerText = 'LMS AI Dashboard - Production v1.2';
+      } else {
+        body.classList.remove('mode-tech');
+        body.classList.add('mode-student');
+        techBtn.classList.remove('active');
+        studentBtn.classList.add('active');
+        studentBtn.classList.add('student-color');
+        
+        asideSubtitle.innerText = 'Trình Giả Lập Sinh Viên';
+        asideFooterVer.innerText = 'Student Journey Simulator v1.0';
+        
+        // Initialize dynamic data when switching to student simulator
+        initStudentData();
+      }
+    }
+
+    // Student Tab Switching Logic
+    function switchStudentTab(tabId, el) {
+      // Hide all simulator tab contents
+      document.querySelectorAll('#student-simulator-wrapper .sim-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show target tab content
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+
+      // Update active state in sidebar links
+      document.querySelectorAll('#student-sidebar-menu .toc-link').forEach(link => {
+        link.classList.remove('active');
+      });
+      el.classList.add('active');
+      
+      // Auto scroll to top of main on transition
+      document.querySelector('main').scrollTop = 0;
+    }
+
+    // Set default mode on load
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('mode-tech');
+    });
+
     // Highlight architecture connections
     const connections = {
       'client': ['line-client-gateway'],
