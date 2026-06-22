@@ -3321,6 +3321,55 @@ C) Cả hai đều cho kết quả giống nhau.
         }, 8); // Speed of character typing
       }, 800);
     }
+
+    // ========================================================
+    // ONE-GATE ADMINISTRATION REQUEST FLOW
+    // ========================================================
+    let reqCount = 22;
+    function submitOneGateRequest(event) {
+      event.preventDefault();
+      const reqTypeSelect = document.getElementById('req-type');
+      const reqReasonArea = document.getElementById('req-reason');
+      const tbody = document.getElementById('one-gate-history-tbody');
+      
+      if (!reqTypeSelect || !reqReasonArea || !tbody) return;
+
+      const reqId = `REQ-00${reqCount++}`;
+      const reqType = reqTypeSelect.value;
+      const today = new Date();
+      const formattedDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+
+      // Append new Request row (Pending status)
+      const newRow = document.createElement('tr');
+      newRow.id = `row-${reqId}`;
+      newRow.innerHTML = `
+        <td>${reqId}</td>
+        <td>${reqType}</td>
+        <td>🤖 Rika (Cố vấn)</td>
+        <td><span id="status-${reqId}" style="background:rgba(251,191,36,0.15); color:var(--warning); padding:0.15rem 0.4rem; border-radius:4px; font-weight:600;">Đang xử lý</span></td>
+        <td>${formattedDate}</td>
+      `;
+      
+      // Insert at the beginning of the table history body
+      tbody.insertBefore(newRow, tbody.firstChild);
+
+      // Reset Form Input
+      reqReasonArea.value = '';
+
+      // Alert simulation start
+      alert(`Đơn ${reqId} đã gửi lên Cổng 1 Cửa. Rika đang duyệt đơn tự động...`);
+
+      // Simulated auto-approval in 3 seconds
+      setTimeout(() => {
+        const statusSpan = document.getElementById(`status-${reqId}`);
+        if (statusSpan) {
+          statusSpan.innerText = 'Đã duyệt';
+          statusSpan.style.background = 'rgba(52,211,153,0.15)';
+          statusSpan.style.color = 'var(--success)';
+          alert(`🔔 AI Rika đã tự động phê duyệt đơn ${reqId}!`);
+        }
+      }, 3000);
+    }
   </script>
 </body>
 </html>
