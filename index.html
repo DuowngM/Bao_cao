@@ -1403,10 +1403,11 @@
   <aside>
     <div class="toc-brand">
       <span class="toc-title">LMS AI</span>
-      <span class="toc-subtitle">Kế Hoạch Triển Khai</span>
+      <span class="toc-subtitle" id="aside-subtitle">Kế Hoạch Triển Khai</span>
     </div>
     
-    <ul class="toc-menu">
+    <!-- Menu Chế độ Kỹ thuật (Technical Sidebar) -->
+    <ul class="toc-menu" id="tech-sidebar-menu" style="display: flex;">
       <li><a href="#tong-quan" class="toc-link active" onclick="setActiveLink(this)"><span>📝</span><span>1. Tổng quan kế hoạch</span></a></li>
       <li><a href="#kien-truc" class="toc-link" onclick="setActiveLink(this)"><span>📐</span><span>2. Kiến trúc hệ thống</span></a></li>
       <li><a href="#loi-trinh" class="toc-link" onclick="setActiveLink(this)"><span>📅</span><span>3. Lộ trình triển khai</span></a></li>
@@ -1416,17 +1417,38 @@
       <li><a href="#quan-ly-du-an" class="toc-link" onclick="setActiveLink(this)"><span>📊</span><span>7. Bảng Quản Lý Dự Án</span></a></li>
     </ul>
 
+    <!-- Menu Chế độ Sinh viên (Student Sidebar) -->
+    <ul class="toc-menu" id="student-sidebar-menu" style="display: none;">
+      <li><a href="javascript:void(0)" class="toc-link active" onclick="switchStudentTab('info', this)"><span>🔔</span><span>1. Thông tin & Bảng xếp hạng</span></a></li>
+      <li><a href="javascript:void(0)" class="toc-link" onclick="switchStudentTab('dashboard', this)"><span>🏠</span><span>2. Trang chủ & Lộ trình</span></a></li>
+      <li><a href="javascript:void(0)" class="toc-link" onclick="switchStudentTab('learning', this)"><span>📖</span><span>3. Học tập & AI Rika</span></a></li>
+      <li><a href="javascript:void(0)" class="toc-link" onclick="switchStudentTab('motivation', this)"><span>⚡</span><span>4. Động lực học tập</span></a></li>
+      <li><a href="javascript:void(0)" class="toc-link" onclick="switchStudentTab('admin', this)"><span>🏛️</span><span>5. Hành chính Một cửa</span></a></li>
+      <li><a href="javascript:void(0)" class="toc-link" onclick="switchStudentTab('portfolio', this)"><span>💼</span><span>6. Portfolio cá nhân</span></a></li>
+    </ul>
+
     <div class="toc-footer">
-      <span>LMS AI Dashboard - Production v1.2</span>
+      <span id="aside-footer-ver">LMS AI Dashboard - Production v1.2</span>
     </div>
   </aside>
 
+  <div class="global-header">
+    <div style="font-weight: 600; font-size: 1.1rem; color: #fff;">
+      Hệ thống LMS AI thế hệ mới
+    </div>
+    <div class="mode-switch-wrapper">
+      <button id="btn-mode-tech" class="mode-switch-btn active" onclick="switchMode('tech')">⚙️ Góc Kỹ Thuật</button>
+      <button id="btn-mode-student" class="mode-switch-btn" onclick="switchMode('student')">🎓 Trình Giả Lập LMS</button>
+    </div>
+  </div>
+
   <!-- Main Content Scroll -->
   <main>
+    <div id="tech-content-wrapper" style="display: flex; flex-direction: column; gap: 5rem; width: 100%;">
 
-    <!-- SECTION 1: Tổng quan -->
-    <section id="tong-quan">
-      <div class="section-header">
+      <!-- SECTION 1: Tổng quan -->
+      <section id="tong-quan">
+        <div class="section-header">
         <span class="section-badge">Giới thiệu</span>
         <h2 class="section-title">Kế Hoạch Phát Triển Hệ Thống LMS AI</h2>
         <p class="section-desc">Dự án Tích hợp Trí tuệ Nhân tạo hỗ trợ đào tạo và chăm sóc học viên toàn diện.</p>
@@ -2095,8 +2117,7 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
       </div>
     </section>
 
-
-
+    </div>
   </main>
 
   <script>
