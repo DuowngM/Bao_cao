@@ -1,0 +1,81 @@
+<h2>Bố trí phần "Vấn đề hệ thống cũ & Giải pháp"</h2>
+<p class="subtitle">Đưa các vấn đề lên trước phần kế hoạch phát triển hệ thống để làm rõ lý do cải tiến hệ thống mới.</p>
+
+<div class="options">
+  <div class="option selected" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Phương án A: Thêm mục độc lập "2. Vấn đề & Giải pháp Hệ thống cũ"</h3>
+      <p>Đặt ngay sau phần Tổng quan và trước Kiến trúc hệ thống. Sẽ đánh số lại các phần tiếp theo. Tối ưu cho việc nhấn mạnh các giải quyết kỹ thuật cho nghiệp vụ lỗi.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Phương án B: Tích hợp trực tiếp vào mục "1. Tổng quan kế hoạch"</h3>
+      <p>Thêm tiểu mục "1.2 Khảo sát & Vấn đề cốt lõi" ngay trong phần Tổng quan hiện tại. Giữ nguyên hệ thống phân cấp 7 phần hiện có.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Phương án C: Tách riêng tài liệu Khảo sát hiện trạng</h3>
+      <p>Đặt thành một trang/file độc lập hoàn toàn và chỉ liên kết tham chiếu, không đưa trực tiếp lên Dashboard chính.</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 2rem;">
+  <h3>Bản Phác Thảo Nội Dung Vấn Đề & Giải Pháp (Đề xuất cho Phương án A)</h3>
+  <p class="subtitle" style="margin-bottom: 1rem;">Mô hình giải quyết kỹ thuật cho 4 vấn đề lớn:</p>
+  
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <!-- Issue 1 -->
+    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <span style="background: var(--error); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Vấn đề 1</span>
+        <strong style="color: var(--text-primary);">Sinh viên các hệ học khác nhau học chung một lớp</strong>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 0.5rem; border-left: 2px solid var(--border);">
+        <p style="margin-bottom: 0.5rem;"><strong>Hệ thống cũ:</strong> Ràng buộc chương trình đào tạo và cơ cấu chấm điểm theo Lớp (Class), dẫn đến việc sinh viên chất lượng cao, sinh viên hệ chuẩn, hoặc sinh viên học lại chung lớp không thể có bộ trọng số điểm khác nhau.</p>
+        <p style="color: var(--success);">✔ <strong>Giải pháp hệ thống mới:</strong> Tách biệt thực thể <strong>Lớp học vật lý (ClassSession)</strong> khỏi <strong>Chương trình học của Sinh viên (StudentCurriculum)</strong>. Khi tính toán điểm số hoặc đánh giá tiến độ, hệ thống sẽ ánh xạ động bộ trọng số theo hệ học riêng của từng Sinh viên, thay vì theo lớp.</p>
+      </div>
+    </div>
+
+    <!-- Issue 2 -->
+    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <span style="background: var(--error); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Vấn đề 2</span>
+        <strong style="color: var(--text-primary);">Lưu lại lịch sử lớp học sau từng môn học (chỉ số & giảng viên)</strong>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 0.5rem; border-left: 2px solid var(--border);">
+        <p style="margin-bottom: 0.5rem;"><strong>Hệ thống cũ:</strong> Sau khi kết thúc môn học của lớp, dữ liệu môn học mới sẽ ghi đè, làm mất lịch sử giảng viên giảng dạy và các chỉ số điểm danh, chuyên cần của môn học trước đó.</p>
+        <p style="color: var(--success);">✔ <strong>Giải pháp hệ thống mới:</strong> Thiết kế bảng lịch sử <strong>class_course_history</strong> để lưu trữ snapshot của mỗi học phần đã hoàn thành, bao gồm: Mã lớp, Mã môn, Giảng viên giảng dạy, Tỷ lệ chuyên cần, Điểm trung bình lớp và Thời gian kết thúc. Đảm bảo khả năng truy vấn hồi cứu lịch sử đào tạo.</p>
+      </div>
+    </div>
+
+    <!-- Issue 3 -->
+    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <span style="background: var(--error); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Vấn đề 3</span>
+        <strong style="color: var(--text-primary);">Sinh viên học lại và chuyển hệ học (ràng buộc đúng chương trình học)</strong>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 0.5rem; border-left: 2px solid var(--border);">
+        <p style="margin-bottom: 0.5rem;"><strong>Hệ thống cũ:</strong> Khó kiểm soát lộ trình khi sinh viên chuyển từ hệ Chất lượng cao xuống hệ Thường (hoặc ngược lại) do danh sách môn học của từng hệ bị cố định, dễ gây sai lệch môn học bắt buộc.</p>
+        <p style="color: var(--success);">✔ <strong>Giải pháp hệ thống mới:</strong> Xây dựng bảng quy đổi tương đương <strong>course_equivalents</strong> và cho phép cấu hình <strong>Chương trình học cá nhân hóa (IndividualStudyPlan)</strong>. Hệ thống tự động đối chiếu lộ trình môn học của sinh viên theo hệ học hiện tại để cảnh báo nếu sinh viên đăng ký sai môn.</p>
+      </div>
+    </div>
+
+    <!-- Issue 4 -->
+    <div style="display: flex; flex-direction: column; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <span style="background: var(--error); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Vấn đề 4</span>
+        <strong style="color: var(--text-primary);">Đồng nhất môn học khác ID giữa các khóa (Ví dụ: môn C của K24 và K25)</strong>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 0.5rem; border-left: 2px solid var(--border);">
+        <p style="margin-bottom: 0.5rem;"><strong>Hệ thống cũ:</strong> Môn C khóa K24 (ID: 101) và Môn C khóa K25 (ID: 202) là hai thực thể độc lập. Khi sinh viên K24 học lại cùng lớp K25, hệ thống không tự động nhận diện và cập nhật điểm học lại cho sinh viên K24.</p>
+        <p style="color: var(--success);">✔ <strong>Giải pháp hệ thống mới:</strong> Định nghĩa mã môn học gốc <strong>base_subject_id (Mã môn học dùng chung)</strong> làm khóa quy đổi. Môn C của K24 và K25 tuy có ID khác nhau trong chương trình đào tạo cụ thể, nhưng đều tham chiếu đến cùng một `base_subject_id`. Hệ thống sẽ dựa vào khóa này để tự động tính điểm học lại và thay thế điểm cũ.</p>
+      </div>
+    </div>
+  </div>
+</div>
