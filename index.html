@@ -3150,6 +3150,69 @@ GET  /api/v1/ai/risk-score/{mssv} - Truy xuất chỉ số rủi ro học vụ t
         }
       }, 1000);
     }
+
+    // ========================================================
+    // STUDENT LEADERBOARD & INTERACTIVE DATA
+    // ========================================================
+    const studentsDataset = [
+      { rank: 1, mssv: 'SV0089', name: 'Nguyễn Văn A', class: 'D21HTTT01', program: 'clc', cohort: 'k24', xp: 8450, level: 14 },
+      { rank: 2, mssv: 'SV0012', name: 'Trần Thị B', class: 'D21HTTT02', program: 'clc', cohort: 'k24', xp: 8120, level: 13 },
+      { rank: 3, mssv: 'SV0145', name: 'Phạm Minh C', class: 'D22CNTT01', program: 'chuan', cohort: 'k25', xp: 7900, level: 13 },
+      { rank: 4, mssv: 'SV0201', name: 'Lê Hoàng Nam', class: 'D22CNTT03', program: 'chuan', cohort: 'k25', xp: 7500, level: 12 },
+      { rank: 5, mssv: 'SV0034', name: 'Vũ Minh Đức', class: 'D21HTTT01', program: 'clc', cohort: 'k24', xp: 7200, level: 11 },
+      { rank: 6, mssv: 'SV0122', name: 'Hoàng Tuấn Anh', class: 'D22CNTT02', program: 'chuan', cohort: 'k25', xp: 6850, level: 11 }
+    ];
+
+    function initStudentData() {
+      renderLeaderboard(studentsDataset);
+    }
+
+    function renderLeaderboard(data) {
+      const tbody = document.getElementById('leaderboard-tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = '';
+      data.forEach((student) => {
+        let rankText = student.rank;
+        if (student.rank <= 3) {
+          rankText = `<span class="rank-badge rank-${student.rank}">${student.rank}</span>`;
+        }
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${rankText}</td>
+          <td><code>${student.mssv}</code></td>
+          <td><strong>${student.name}</strong></td>
+          <td>${student.class}</td>
+          <td>${student.program === 'clc' ? 'Chất lượng cao' : 'Chuẩn (Đại trà)'}</td>
+          <td style="color:var(--primary); font-weight:600;">${student.xp.toLocaleString()} XP</td>
+          <td><span style="background:rgba(168,85,247,0.15); color:var(--secondary); padding:0.15rem 0.4rem; border-radius:4px; font-weight:600;">Lvl ${student.level}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function filterLeaderboard() {
+      const programFilter = document.getElementById('leaderboard-program').value;
+      const cohortFilter = document.getElementById('leaderboard-cohort').value;
+
+      let filtered = studentsDataset;
+      if (programFilter !== 'all') {
+        filtered = filtered.filter(s => s.program === programFilter);
+      }
+      if (cohortFilter !== 'all') {
+        filtered = filtered.filter(s => s.cohort === cohortFilter);
+      }
+
+      // Re-rank based on filtered results
+      const sorted = [...filtered].sort((a, b) => b.xp - a.xp);
+      const reranked = sorted.map((item, idx) => ({
+        ...item,
+        rank: idx + 1
+      }));
+
+      renderLeaderboard(reranked);
+    }
   </script>
 </body>
 </html>
